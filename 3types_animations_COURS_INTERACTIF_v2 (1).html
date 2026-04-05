@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LES 3 TYPES D'ANIMATIONS — Cours Interactif BAC ASSP / AEPA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+  :root {
+    --navy: #0f1b35;
+    --blue: #1a3a6b;
+    --accent: #f5a623;
+    --orange: #f97316;
+    --green: #22c55e;
+    --pink: #ec4899;
+    --purple: #8b5cf6;
+    --teal: #14b8a6;
+    --red: #ef4444;
+    --light: #f8faff;
+    --card-bg: rgba(255,255,255,0.08);
+    --sociale: #f97316;
+    --cognitive: #8b5cf6;
+    --motrice: #22c55e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ============ NAV ============ */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,27,53,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    height: 56px; flex-wrap: nowrap; overflow-x: auto;
+  }
+  #navbar .logo {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 0.85rem; color: var(--accent); white-space: nowrap;
+    margin-right: 0.5rem;
+  }
+  .nav-btn {
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7); padding: 0.3rem 0.65rem;
+    border-radius: 20px; cursor: pointer; font-size: 0.72rem;
+    font-family: 'DM Sans', sans-serif; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent); color: var(--navy);
+    border-color: var(--accent); font-weight: 600;
+  }
+
+  /* ============ PROGRESS BAR ============ */
+  #progress-bar {
+    position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
+    height: 4px; background: rgba(255,255,255,0.1);
+  }
+  #progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--orange));
+    transition: width 0.5s ease; width: 0%;
+  }
+
+  /* ============ SCREENS ============ */
+  .screen { display: none; padding: 80px 1rem 2rem; min-height: 100vh; }
+  .screen.active { display: block; animation: fadeSlide 0.4s ease; }
+  @keyframes fadeSlide { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* ============ HERO ============ */
+  .hero {
+    text-align: center; padding: 3rem 1rem 2rem;
+  }
+  .hero .badge {
+    display: inline-block; background: rgba(245,166,35,0.15);
+    border: 1px solid rgba(245,166,35,0.4); color: var(--accent);
+    padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: rgba(255,255,255,0.6); font-size: 1rem; margin-bottom: 2rem; }
+
+  .type-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    margin: 2rem 0;
+  }
+  .type-card {
+    padding: 1.5rem 1rem; border-radius: 16px; text-align: center;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+  }
+  .type-card:hover { transform: translateY(-4px); }
+  .type-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+  .type-card h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .type-card p { font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; }
+  .sociale-card { background: rgba(249,115,22,0.15); border-color: rgba(249,115,22,0.4); }
+  .cognitive-card { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); }
+  .motrice-card { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.8rem 1.8rem; border-radius: 12px; font-weight: 600;
+    font-size: 0.95rem; cursor: pointer; border: none;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: var(--navy); }
+  .btn-primary:hover { background: var(--orange); transform: translateY(-2px); }
+  .btn-outline { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #fff; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-purple { background: var(--purple); color: #fff; }
+  .btn-sm { padding: 0.5rem 1rem; font-size: 0.82rem; border-radius: 8px; }
+
+  /* ============ SECTION HEADERS ============ */
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+  .section-tag {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--accent); font-weight: 600; margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.2;
+  }
+  .section-sub { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-top: 0.4rem; }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem;
+  }
+  .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; }
+
+  /* ============ QUIZ ENGINE ============ */
+  .quiz-wrap { max-width: 700px; margin: 0 auto; }
+  .question-num {
+    font-size: 0.75rem; color: var(--accent); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .question-text {
+    font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 1.2rem; line-height: 1.4;
+  }
+  .choices { display: flex; flex-direction: column; gap: 0.6rem; }
+  .choice-btn {
+    background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.12);
+    color: #fff; padding: 0.9rem 1.2rem; border-radius: 12px;
+    cursor: pointer; text-align: left; font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .choice-btn:hover { border-color: var(--accent); background: rgba(245,166,35,0.08); }
+  .choice-btn.correct { background: rgba(34,197,94,0.2); border-color: var(--green); color: var(--green); }
+  .choice-btn.wrong { background: rgba(239,68,68,0.2); border-color: var(--red); color: var(--red); }
+  .choice-btn.reveal-correct { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.4); }
+  .choice-btn:disabled { cursor: default; }
+
+  .feedback-box {
+    margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 12px;
+    font-size: 0.9rem; line-height: 1.5; display: none;
+  }
+  .feedback-box.show { display: block; animation: fadeSlide 0.3s ease; }
+  .feedback-box.good { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); }
+  .feedback-box.bad { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); }
+
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.5rem;
+  }
+  .q-progress { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+
+  /* ============ SCORE DISPLAY ============ */
+  .score-circle {
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 6px solid; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; margin: 1rem auto;
+  }
+  .score-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; }
+  .score-label { font-size: 0.7rem; opacity: 0.6; }
+
+  /* ============ MATCHING GAME ============ */
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .match-item {
+    padding: 0.75rem 1rem; border-radius: 10px; cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.15); font-size: 0.85rem;
+    transition: all 0.2s; background: rgba(255,255,255,0.05);
+    text-align: center; user-select: none;
+  }
+  .match-item:hover { border-color: var(--accent); }
+  .match-item.selected { border-color: var(--accent); background: rgba(245,166,35,0.15); }
+  .match-item.matched-correct { border-color: var(--green); background: rgba(34,197,94,0.15); color: var(--green); cursor: default; }
+  .match-item.matched-wrong { border-color: var(--red); background: rgba(239,68,68,0.15); color: var(--red); animation: shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ============ VRAI/FAUX ============ */
+  .vf-card {
+    background: rgba(255,255,255,0.06); border-radius: 16px; padding: 1.5rem;
+    text-align: center; margin-bottom: 1rem;
+  }
+  .vf-statement { font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.5; }
+  .vf-btns { display: flex; gap: 1rem; justify-content: center; }
+  .vf-btn {
+    padding: 0.8rem 2.5rem; border-radius: 12px; border: 2px solid;
+    font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    font-family: 'Syne', sans-serif;
+  }
+  .vf-btn-v { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.1); }
+  .vf-btn-v:hover { background: rgba(34,197,94,0.25); }
+  .vf-btn-f { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
+  .vf-btn-f:hover { background: rgba(239,68,68,0.2); }
+  .vf-btn.selected-v { background: var(--green); color: #fff; }
+  .vf-btn.selected-f { background: var(--red); color: #fff; }
+
+  /* ============ WORD SCRAMBLE ============ */
+  .scramble-wrap { text-align: center; }
+  .scrambled-word {
+    font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800;
+    letter-spacing: 8px; color: var(--accent); margin: 1rem 0;
+  }
+  .scramble-hint { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem; }
+  .scramble-input {
+    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2);
+    color: #fff; padding: 0.8rem 1.2rem; border-radius: 10px;
+    font-size: 1.1rem; font-family: 'Syne', sans-serif; text-transform: uppercase;
+    text-align: center; width: 100%; max-width: 320px; outline: none;
+    letter-spacing: 4px;
+  }
+  .scramble-input:focus { border-color: var(--accent); }
+
+  /* ============ SCOREBOARD ============ */
+  .scoreboard-wrap { overflow-x: auto; }
+  table.scores {
+    width: 100%; border-collapse: collapse; font-size: 0.85rem;
+  }
+  table.scores th {
+    background: rgba(245,166,35,0.15); color: var(--accent);
+    padding: 0.6rem 0.8rem; text-align: left; font-weight: 600;
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  table.scores td {
+    padding: 0.55rem 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+    white-space: nowrap;
+  }
+  table.scores tr:hover td { background: rgba(255,255,255,0.04); }
+  .badge-score {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px;
+    font-weight: 700; font-size: 0.8rem;
+  }
+  .badge-a { background: rgba(34,197,94,0.2); color: var(--green); }
+  .badge-b { background: rgba(245,166,35,0.2); color: var(--accent); }
+  .badge-c { background: rgba(239,68,68,0.2); color: var(--red); }
+
+  /* ============ INPUT FIELDS ============ */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); margin-bottom: 0.4rem; display: block; }
+  .form-input {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; padding: 0.7rem 1rem; border-radius: 10px;
+    font-size: 0.9rem; width: 100%; outline: none;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-select { appearance: none; }
+
+  /* ============ CHIPS / TAGS ============ */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+  .chip {
+    padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.78rem; font-weight: 500;
+  }
+  .chip-sociale { background: rgba(249,115,22,0.2); color: var(--sociale); }
+  .chip-cognitive { background: rgba(139,92,246,0.2); color: var(--cognitive); }
+  .chip-motrice { background: rgba(34,197,94,0.2); color: var(--motrice); }
+  .chip-neutral { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+
+  /* ============ INFO BOXES ============ */
+  .info-box {
+    padding: 1rem 1.2rem; border-radius: 12px; margin: 0.75rem 0;
+    border-left: 4px solid; font-size: 0.88rem; line-height: 1.6;
+  }
+  .info-orange { border-color: var(--orange); background: rgba(249,115,22,0.1); }
+  .info-purple { border-color: var(--purple); background: rgba(139,92,246,0.1); }
+  .info-green { border-color: var(--green); background: rgba(34,197,94,0.1); }
+  .info-red { border-color: var(--red); background: rgba(239,68,68,0.12); }
+  .info-accent { border-color: var(--accent); background: rgba(245,166,35,0.1); }
+
+  /* ============ GRID LAYOUTS ============ */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media(max-width:640px) {
+    .grid-2, .grid-3, .type-cards, .match-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ STEPS ============ */
+  .steps { display: flex; flex-direction: column; gap: 0.75rem; }
+  .step {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px;
+  }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .step-text strong { display: block; margin-bottom: 0.2rem; font-size: 0.9rem; }
+  .step-text span { font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+
+  /* ============ SMART TABLE ============ */
+  .smart-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+  .smart-row {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px;
+  }
+  .smart-letter {
+    width: 44px; height: 44px; border-radius: 10px; font-family: 'Syne',sans-serif;
+    font-size: 1.4rem; font-weight: 800; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+  }
+  .smart-content strong { font-size: 0.95rem; }
+  .smart-content p { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 0.2rem; }
+
+  /* ============ PARTICIPANT INPUT ============ */
+  .participant-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.6rem;
+    margin: 1rem 0;
+  }
+  .participant-input {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; padding: 0.55rem 0.85rem; border-radius: 8px;
+    font-size: 0.85rem; width: 100%; outline: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .participant-input:focus { border-color: var(--accent); }
+  .participant-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  /* ============ ANIMATION ============ */
+  .pulse { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .confetti-rain { position: fixed; top: 0; left: 0; right: 0; pointer-events: none; z-index: 999; }
+
+  /* ============ RESULTS CHART ============ */
+  .bar-chart { display: flex; flex-direction: column; gap: 0.4rem; }
+  .bar-row { display: flex; align-items: center; gap: 0.75rem; }
+  .bar-name { width: 120px; font-size: 0.8rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 700; transition: width 1s ease; }
+  .bar-score-label { width: 50px; font-size: 0.8rem; font-weight: 700; }
+
+  /* ============ TIMER ============ */
+  .timer-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+    color: var(--red); padding: 0.3rem 0.8rem; border-radius: 20px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+  }
+  .timer-badge.warning { animation: pulse 0.5s infinite; }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #1a2a4a; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%;
+    animation: fadeSlide 0.3s ease;
+  }
+  .modal h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; margin-bottom: 1rem; }
+
+  /* ============ TABS ============ */
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 0.5rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
+    background: none; color: rgba(255,255,255,0.5); cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .tab-btn.active { background: rgba(245,166,35,0.2); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: #1a3a6b; border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.8rem 1.5rem; border-radius: 30px; font-size: 0.9rem;
+    z-index: 300; animation: toastIn 0.3s ease; white-space: nowrap;
+  }
+  @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+  /* Separator */
+  .sep { height: 1px; background: rgba(255,255,255,0.08); margin: 1.5rem 0; }
+  .text-accent { color: var(--accent); }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .fw-bold { font-weight: 700; }
+  .mt-1 { margin-top: 1rem; }
+  .mb-1 { margin-bottom: 1rem; }
+  .text-sm { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+  .flex-center { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .gap-1 { gap: 1rem; }
+  .w-full { width: 100%; }
+
+  /* ============ EMOJI BIG ============ */
+  .big-emoji { font-size: 3rem; text-align: center; display: block; margin-bottom: 0.5rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">🎭 3 TYPES</div>
+  <button class="nav-btn active" onclick="goTo('accueil')">🏠 Accueil</button>
+  <button class="nav-btn" onclick="goTo('participants')">👥 Appel</button>
+  <button class="nav-btn" onclick="goTo('diag')">🔎 Diag</button>
+  <button class="nav-btn" onclick="goTo('cartes')">🗺️ Cartes</button>
+  <button class="nav-btn" onclick="goTo('cours')">📚 Cours</button>
+  <button class="nav-btn" onclick="goTo('jeux')">🎮 Jeux</button>
+  <button class="nav-btn" onclick="goTo('formative')">✏️ Formative</button>
+  <button class="nav-btn" onclick="goTo('sommative')">🏆 Bilan</button>
+  <button class="nav-btn" onclick="goTo('scores')">📊 Scores</button>
+</nav>
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 0 : ACCUEIL -->
+<!-- ============================================================ -->
+<div class="screen active" id="screen-accueil">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">BAC ASSP • AEPA • Formation initiale</div>
+      <h1>Les <span>3 Types</span><br>d'Animations</h1>
+      <p>Un cours interactif complet — diagnostique, apprentissage, jeux, évaluation</p>
+      <div class="type-cards">
+        <div class="type-card sociale-card">
+          <span class="emoji">🤝</span>
+          <h3>Sociale</h3>
+          <p>Lien • Inclusion • Citoyenneté</p>
+        </div>
+        <div class="type-card cognitive-card">
+          <span class="emoji">🧠</span>
+          <h3>Cognitive</h3>
+          <p>Mémoire • Logique • Créativité</p>
+        </div>
+        <div class="type-card motrice-card">
+          <span class="emoji">💪</span>
+          <h3>Motrice</h3>
+          <p>Corps • Prévention • Adaptation</p>
+        </div>
+      </div>
+      <div class="info-box info-accent" style="text-align:left;max-width:600px;margin:1rem auto;">
+        <strong>👩‍🏫 Comment ça marche ?</strong><br>
+        1. Enregistrer les participants → 2. Éval diagnostique → 3. Cours + Jeux → 4. Éval formative → 5. Bilan final → 6. Comparer les scores
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;">
+        <button class="btn btn-primary" onclick="goTo('participants')">🚀 Commencer le cours</button>
+        <button class="btn btn-outline" onclick="goTo('scores')">📊 Voir les résultats</button>
+      </div>
+      <p class="text-sm" style="margin-top:1.5rem;">Auteure : PEPITONE Chloé • BAC PRO ASSP / AEPA</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 1 : PARTICIPANTS -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-participants">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Étape 1</div>
+      <div class="section-title">👥 Liste des participants</div>
+      <div class="section-sub">Entrez les prénoms pour suivre les résultats individuels</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Combien d'élèves ?</div>
+      <div class="form-group">
+        <input type="number" class="form-input" id="nb-students" value="15" min="1" max="35"
+          oninput="generateParticipantFields()" style="width:120px;">
+      </div>
+      <div id="participant-fields" class="participant-grid"></div>
+      <button class="btn btn-primary mt-1" onclick="saveParticipants()">✅ Enregistrer la liste</button>
+    </div>
+    <div id="participant-confirm" style="display:none;" class="info-box info-green">
+      ✅ <strong id="participant-count"></strong> participants enregistrés ! Vous pouvez démarrer.
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="goTo('diag')">→ Éval diagnostique</button>
+      <button class="btn btn-outline" onclick="goTo('cours')">→ Aller au cours</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 2 : ÉVAL DIAGNOSTIQUE -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-diag">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Évaluation diagnostique</div>
+      <div class="section-title">🔎 Ce que tu sais déjà</div>
+      <div class="section-sub">5 questions — pas de notation — juste pour voir où on en est !</div>
+    </div>
+
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="form-group">
+        <label class="form-label">Qui répond ?</label>
+        <select class="form-input form-select" id="diag-student"></select>
+      </div>
+    </div>
+
+    <div class="quiz-wrap" id="diag-quiz-wrap">
+      <div id="diag-question-area"></div>
+      <div class="quiz-nav">
+        <span class="q-progress" id="diag-progress"></span>
+        <button class="btn btn-primary btn-sm" id="diag-next-btn" onclick="diagNext()" style="display:none;">Suivant →</button>
+      </div>
+    </div>
+    <div id="diag-results" style="display:none;">
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji" id="diag-emoji"></span>
+        <div class="section-title" id="diag-score-text"></div>
+        <div class="section-sub" id="diag-feedback-text" style="margin-top:0.5rem;"></div>
+        <div class="sep"></div>
+        <p class="text-sm">Score enregistré ! Passe au cours 👇</p>
+        <button class="btn btn-primary mt-1" onclick="goTo('cartes')">→ Activité cartes mentales</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 3 : COURS -->
+<!-- ============================================================ -->
+
+<!-- ============================================================ -->
+<!-- ÉCRAN CARTES MENTALES -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-cartes">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🗺️ Activité</div>
+      <div class="section-title">Cartes mentales — Le cadre légal</div>
+      <div class="section-sub">Chaque apprenant présente sa carte mentale à l'oral · Les cartes restent affichées au mur</div>
+    </div>
+
+    <!-- Consigne formatrice -->
+    <div class="card" style="border-left:4px solid var(--orange);margin-bottom:1.2rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <span style="font-size:1.1rem;">⚠️</span>
+        <strong style="color:var(--orange);">Réservé formatrice</strong>
+      </div>
+      <p style="font-size:0.88rem;color:rgba(255,255,255,0.75);margin:0;">
+        Avant de passer au cours, chaque apprenant présente sa carte mentale (2 min max).
+        Les cartes restent au mur toute la séance — les apprenants pourront s'y référer.
+      </p>
+    </div>
+
+    <!-- Textes travaillés -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem;">
+      <div class="card" style="border-top:3px solid var(--soc);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.4rem;">📜</div>
+        <div style="font-weight:700;color:var(--soc);margin-bottom:0.3rem;font-size:0.95rem;">Loi 2002-2</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);">Rénovation de l'action sociale<br>Droits des usagers</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--cog);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.4rem;">📜</div>
+        <div style="font-weight:700;color:var(--cog);margin-bottom:0.3rem;font-size:0.95rem;">Loi 2005-102</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);">Égalité des droits<br>Personnes handicapées</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--mot);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.4rem;">📜</div>
+        <div style="font-weight:700;color:var(--mot);margin-bottom:0.3rem;font-size:0.95rem;">CASF</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);">Code de l'Action Sociale<br>et des Familles</div>
+      </div>
+    </div>
+
+    <!-- Suivi des présentations -->
+    <div class="card" style="margin-bottom:1.2rem;">
+      <div style="font-weight:700;margin-bottom:0.8rem;font-size:0.95rem;">✅ Suivi des présentations</div>
+      <div id="cartes-liste" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem;"></div>
+    </div>
+
+    <!-- Questions guide -->
+    <div class="card" style="border-left:4px solid var(--teal);margin-bottom:1.2rem;">
+      <div style="font-weight:700;color:var(--teal);margin-bottom:0.6rem;font-size:0.9rem;">❓ Questions à poser pendant les présentations</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem;">
+        <li style="font-size:0.85rem;color:rgba(255,255,255,0.8);">→ « Qu'est-ce que ce texte oblige la structure à faire concrètement ? »</li>
+        <li style="font-size:0.85rem;color:rgba(255,255,255,0.8);">→ « Où est-ce que tu as trouvé cette information ? »</li>
+        <li style="font-size:0.85rem;color:rgba(255,255,255,0.8);">→ « Est-ce que quelqu'un peut ajouter quelque chose à cette présentation ? »</li>
+      </ul>
+    </div>
+
+    <!-- Synthèse à dire -->
+    <div class="card" style="border-left:4px solid var(--blue);margin-bottom:1.5rem;">
+      <div style="font-weight:700;color:#60a5fa;margin-bottom:0.5rem;font-size:0.9rem;">🗣️ Synthèse à dire après toutes les présentations</div>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.8);margin:0;font-style:italic;">
+        « Ces textes — loi 2002-2, loi 2005-102, CASF — sont les trois piliers du cadre légal de l'animation.
+        Vos cartes restent au mur toute la séance. On va maintenant voir le cours qui reprend ces éléments. »
+      </p>
+    </div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="goTo('cours')">📚 Démarrer le cours →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-cours">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">📚 Cours</div>
+      <div class="section-title">Les 3 types d'animations</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showCoursTopic('pourquoi',this)">Pourquoi ?</button>
+      <button class="tab-btn" onclick="showCoursTopic('classif',this)">2 Classifications</button>
+      <button class="tab-btn" onclick="showCoursTopic('sociale',this)">🤝 Sociale</button>
+      <button class="tab-btn" onclick="showCoursTopic('cognitive',this)">🧠 Cognitive</button>
+      <button class="tab-btn" onclick="showCoursTopic('motrice',this)">💪 Motrice</button>
+      <button class="tab-btn" onclick="showCoursTopic('etapes',this)">6 Étapes</button>
+      <button class="tab-btn" onclick="showCoursTopic('smart',this)">SMART</button>
+      <button class="tab-btn" onclick="showCoursTopic('glossaire',this)">Glossaire</button>
+    </div>
+
+    <!-- POURQUOI -->
+    <div id="topic-pourquoi" class="cours-topic">
+      <div class="card">
+        <div class="card-title">🌟 L'animation : bien plus qu'un passe-temps</div>
+        <div class="grid-3" style="margin-top:1rem;">
+          <div class="info-box info-accent">
+            <strong>🌟 Bien-être</strong><br>
+            <span class="text-sm">Maintenir l'estime de soi, le plaisir, la joie au quotidien.</span>
+          </div>
+          <div class="info-box info-purple">
+            <strong>🔗 Lien social</strong><br>
+            <span class="text-sm">Rompre l'isolement, créer des relations, appartenir à un groupe.</span>
+          </div>
+          <div class="info-box info-green">
+            <strong>🧠 Stimulation</strong><br>
+            <span class="text-sm">Entretenir les capacités cognitives, motrices et créatives.</span>
+          </div>
+        </div>
+        <div class="info-box info-orange" style="margin-top:1rem;">
+          <strong>📋 Cadre légal à connaître :</strong><br>
+          Loi 2002-2 (droits des usagers) • Loi 2005-102 (handicap) • CASF (Code de l'Action Sociale)
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 CLASSIFICATIONS -->
+    <div id="topic-classif" class="cours-topic" style="display:none;">
+      <div class="card">
+        <div class="card-title">Deux lectures complémentaires — à connaître toutes les deux</div>
+        <div style="overflow-x:auto;margin-top:1rem;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+            <thead>
+              <tr>
+                <th style="padding:0.6rem;text-align:left;background:rgba(245,166,35,0.1);color:var(--accent);">Type</th>
+                <th style="padding:0.6rem;text-align:left;background:rgba(245,166,35,0.1);color:var(--accent);">Classification 1 (médico-social)</th>
+                <th style="padding:0.6rem;text-align:left;background:rgba(245,166,35,0.1);color:var(--accent);">Classification 2 (BAC ASSP / BPJEPS)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);">🤝</td>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);color:var(--sociale);">Animation SOCIALE</td>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);">Culturelle + Ludique coopératif</td>
+              </tr>
+              <tr>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);">🧠</td>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);color:var(--cognitive);">Animation COGNITIVE</td>
+                <td style="padding:0.6rem;border-bottom:1px solid rgba(255,255,255,0.08);">Ludique logique + Culturelle créative</td>
+              </tr>
+              <tr>
+                <td style="padding:0.6rem;">💪</td>
+                <td style="padding:0.6rem;color:var(--motrice);">Animation MOTRICE</td>
+                <td style="padding:0.6rem;">Physique + Créative motricité fine</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box info-accent" style="margin-top:1rem;">
+          💡 Une activité peut appartenir à PLUSIEURS types simultanément — c'est le débat qui est formateur !
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIALE -->
+    <div id="topic-sociale" class="cours-topic" style="display:none;">
+      <div class="card" style="border-left:4px solid var(--sociale);">
+        <div class="card-title">🤝 Animation SOCIALE — Créer du lien, favoriser l'inclusion</div>
+        <div class="chips">
+          <span class="chip chip-sociale">Lien social</span>
+          <span class="chip chip-sociale">Cohésion</span>
+          <span class="chip chip-sociale">Inclusion</span>
+          <span class="chip chip-sociale">Citoyenneté</span>
+          <span class="chip chip-sociale">Empathie</span>
+        </div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="info-box info-orange">
+            <strong>🏠 PA / EHPAD</strong><br>
+            <span class="text-sm">Jeux coopératifs, projets collectifs, sorties, groupes de parole</span>
+          </div>
+          <div class="info-box info-orange">
+            <strong>🧒 Enfants / ALSH</strong><br>
+            <span class="text-sm">Conseil d'enfants, tutorat entre pairs, tournois amicaux</span>
+          </div>
+          <div class="info-box info-orange">
+            <strong>⚡ IME / ITEP</strong><br>
+            <span class="text-sm">Ateliers communication, médiation par le jeu, projets artistiques</span>
+          </div>
+          <div class="info-box info-orange">
+            <strong>🏡 MECS / Foyer</strong><br>
+            <span class="text-sm">Projets citoyens, ateliers droits et devoirs, médiation</span>
+          </div>
+        </div>
+        <div class="info-box info-red" style="margin-top:1rem;">
+          📌 Toujours vérifier le <strong>consentement</strong> et l'<strong>inclusivité</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- COGNITIVE -->
+    <div id="topic-cognitive" class="cours-topic" style="display:none;">
+      <div class="card" style="border-left:4px solid var(--cognitive);">
+        <div class="card-title">🧠 Animation COGNITIVE — Stimuler sans mettre en échec</div>
+        <div class="chips">
+          <span class="chip chip-cognitive">Mémoire CT/LT</span>
+          <span class="chip chip-cognitive">Raisonnement</span>
+          <span class="chip chip-cognitive">Langage</span>
+          <span class="chip chip-cognitive">Attention</span>
+          <span class="chip chip-cognitive">Créativité</span>
+        </div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="info-box info-purple">
+            <strong>🏠 PA / EHPAD</strong><br>
+            <span class="text-sm">Quiz, jeux de mémoire illustrés, réminiscence, mots croisés adaptés</span>
+          </div>
+          <div class="info-box info-purple">
+            <strong>🧒 Enfants / Périscolaire</strong><br>
+            <span class="text-sm">Jeux de logique, escape game, atelier Montessori, lecture créative</span>
+          </div>
+          <div class="info-box info-purple">
+            <strong>⚡ IME / ITEP</strong><br>
+            <span class="text-sm">Pictogrammes, séquençage, tri/classement, jeux sensoriels</span>
+          </div>
+          <div class="info-box info-purple">
+            <strong>🏡 MECS / Foyer</strong><br>
+            <span class="text-sm">Jeux de société, ateliers écriture, projets numériques</span>
+          </div>
+        </div>
+        <div class="info-box info-accent" style="margin-top:1rem;">
+          ⚠️ DYS / TDAH : supports visuels, activités courtes, <strong>valorisation systématique</strong>. Le droit à l'erreur est la règle !
+        </div>
+      </div>
+    </div>
+
+    <!-- MOTRICE -->
+    <div id="topic-motrice" class="cours-topic" style="display:none;">
+      <div class="card" style="border-left:4px solid var(--motrice);">
+        <div class="card-title">💪 Animation MOTRICE — Maintenir les capacités, anticiper les risques</div>
+        <div class="chips">
+          <span class="chip chip-motrice">Motricité globale</span>
+          <span class="chip chip-motrice">Motricité fine</span>
+          <span class="chip chip-motrice">Prévention chutes</span>
+          <span class="chip chip-motrice">Coordination</span>
+          <span class="chip chip-motrice">Détente</span>
+        </div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="info-box info-green">
+            <strong>🏠 PA / EHPAD</strong><br>
+            <span class="text-sm">Gym douce <strong>assise</strong>, marche, pétanque, danse fauteuil</span>
+          </div>
+          <div class="info-box info-green">
+            <strong>🧒 Enfants / ALSH</strong><br>
+            <span class="text-sm">Parcours moteurs, sports collectifs, danse, yoga enfants</span>
+          </div>
+          <div class="info-box info-green">
+            <strong>⚡ IME (handicap moteur)</strong><br>
+            <span class="text-sm">Psychomotricité, balnéothérapie, parcours adapté FR</span>
+          </div>
+          <div class="info-box info-green">
+            <strong>🏡 MECS / Foyer</strong><br>
+            <span class="text-sm">Sport encadré, randonnée, escalade, activités outdoor</span>
+          </div>
+        </div>
+        <div class="info-box info-red" style="margin-top:1rem;">
+          ⚠️ Consulter le dossier + PAI AVANT • Sécuriser l'espace • Surveiller les signes d'alerte<br><br>
+          <strong>🚨 CAT — Crise d'épilepsie :</strong><br>
+          Ne pas retenir • Protéger la tête • Chronométrer • Éloigner les autres • PLS après • Appeler IDE • Si > 5 min → SAMU (15) • Tracer dans le dossier
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 ÉTAPES -->
+    <div id="topic-etapes" class="cours-topic" style="display:none;">
+      <div class="card">
+        <div class="card-title">Les 6 étapes de préparation</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-text"><strong>📋 Recueil des besoins</strong><span>Observer, lire le projet, recueillir goûts et habitudes.</span></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text"><strong>🎯 Objectifs SMART</strong><span>Formuler des objectifs mesurables et atteignables.</span></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text"><strong>🗓️ Planification</strong><span>Choisir activité, date, durée, lieu, groupe, matériel.</span></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text"><strong>✅ Préparation</strong><span>Vérifier le matériel, sécuriser l'espace, prévoir adaptations.</span></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text"><strong>🎬 Animation</strong><span>Accueillir, expliquer, encourager, observer, ajuster.</span></div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text"><strong>📊 Évaluation</strong><span>Observer, noter dans le dossier, transmettre à l'équipe.</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SMART -->
+    <div id="topic-smart" class="cours-topic" style="display:none;">
+      <div class="card">
+        <div class="card-title">Formuler des objectifs S.M.A.R.T.</div>
+        <p class="text-sm" style="margin-bottom:1rem;">Un bon objectif = on sait si on l'a atteint ou non</p>
+        <div class="smart-grid">
+          <div class="smart-row">
+            <div class="smart-letter" style="background:rgba(249,115,22,0.2);color:var(--orange);">S</div>
+            <div class="smart-content"><strong>Spécifique</strong><p>L'objectif est clairement défini — on sait exactement ce qu'on vise.<br>Ex : "Chaque résident prend la parole au moins 2 fois"</p></div>
+          </div>
+          <div class="smart-row">
+            <div class="smart-letter" style="background:rgba(139,92,246,0.2);color:var(--purple);">M</div>
+            <div class="smart-content"><strong>Mesurable</strong><p>On peut vérifier si l'objectif est atteint (observation, comptage).<br>Ex : "6 participants sur 6 ont participé"</p></div>
+          </div>
+          <div class="smart-row">
+            <div class="smart-letter" style="background:rgba(34,197,94,0.2);color:var(--green);">A</div>
+            <div class="smart-content"><strong>Atteignable</strong><p>L'objectif est réaliste par rapport au public et au contexte.<br>Ex : Pas "courir 5 km" pour une gym douce EHPAD</p></div>
+          </div>
+          <div class="smart-row">
+            <div class="smart-letter" style="background:rgba(20,184,166,0.2);color:var(--teal);">R</div>
+            <div class="smart-content"><strong>Réaliste</strong><p>L'objectif est adapté aux ressources disponibles (temps, matériel).<br>Ex : "45 minutes avec le matériel disponible en salle"</p></div>
+          </div>
+          <div class="smart-row">
+            <div class="smart-letter" style="background:rgba(245,166,35,0.2);color:var(--accent);">T</div>
+            <div class="smart-content"><strong>Temporel</strong><p>L'objectif a une échéance précise — pendant la séance, la semaine.<br>Ex : "À l'issue des 45 minutes de la séance"</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOSSAIRE -->
+    <div id="topic-glossaire" class="cours-topic" style="display:none;">
+      <div class="card">
+        <div class="card-title">📖 Glossaire — Acronymes indispensables à l'examen</div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div><div class="info-box info-accent"><strong>ALSH</strong><br><span class="text-sm">Accueil de Loisirs Sans Hébergement</span></div></div>
+          <div><div class="info-box info-accent"><strong>PAI</strong><br><span class="text-sm">Projet d'Accueil Individualisé</span></div></div>
+          <div><div class="info-box info-accent"><strong>ASSP</strong><br><span class="text-sm">Accompagnement, Soins et Services à la Personne</span></div></div>
+          <div><div class="info-box info-accent"><strong>PLS</strong><br><span class="text-sm">Position Latérale de Sécurité</span></div></div>
+          <div><div class="info-box info-accent"><strong>CAT</strong><br><span class="text-sm">Conduite À Tenir</span></div></div>
+          <div><div class="info-box info-accent"><strong>PPA</strong><br><span class="text-sm">Projet Personnalisé d'Accompagnement</span></div></div>
+          <div><div class="info-box info-accent"><strong>EHPAD</strong><br><span class="text-sm">Établissement Hébergement Personnes Âgées Dépendantes</span></div></div>
+          <div><div class="info-box info-accent"><strong>SAMU ☎ 15</strong><br><span class="text-sm">Service d'Aide Médicale Urgente</span></div></div>
+          <div><div class="info-box info-accent"><strong>IDE</strong><br><span class="text-sm">Infirmier(e) Diplômé(e) d'État</span></div></div>
+          <div><div class="info-box info-accent"><strong>SMART</strong><br><span class="text-sm">Spécifique, Mesurable, Atteignable, Réaliste, Temporel</span></div></div>
+          <div><div class="info-box info-accent"><strong>IME</strong><br><span class="text-sm">Institut Médico-Éducatif</span></div></div>
+          <div><div class="info-box info-accent"><strong>TDAH</strong><br><span class="text-sm">Trouble Déficit Attention avec Hyperactivité</span></div></div>
+          <div><div class="info-box info-accent"><strong>ITEP</strong><br><span class="text-sm">Institut Thérapeutique, Éducatif et Pédagogique</span></div></div>
+          <div><div class="info-box info-accent"><strong>TSA</strong><br><span class="text-sm">Trouble du Spectre de l'Autisme</span></div></div>
+          <div><div class="info-box info-accent"><strong>MECS</strong><br><span class="text-sm">Maison d'Enfants à Caractère Social</span></div></div>
+          <div><div class="info-box info-accent"><strong>AEPA</strong><br><span class="text-sm">Animation, Enfance et Personnes Agées</span></div></div>
+        </div>
+        <div class="info-box info-green" style="margin-top:1rem;">
+          💡 Astuce examen : écrire le sigle en entier la 1ère fois — ex : Trouble du Spectre de l'Autisme (TSA)
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="goTo('jeux')">🎮 Aux jeux !</button>
+      <button class="btn btn-outline" onclick="goTo('formative')">✏️ Éval formative</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 4 : JEUX -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-jeux">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🎮 Zone de jeux</div>
+      <div class="section-title">Apprendre en s'amusant</div>
+    </div>
+    <div class="grid-3">
+      <div class="card" style="text-align:center;cursor:pointer;border:2px solid rgba(249,115,22,0.3);" onclick="startGame('matching')">
+        <div style="font-size:2rem;">🔗</div>
+        <div class="card-title">Jeu des paires</div>
+        <p class="text-sm">Associe l'activité à son type d'animation</p>
+        <button class="btn btn-primary btn-sm mt-1">Jouer</button>
+      </div>
+      <div class="card" style="text-align:center;cursor:pointer;border:2px solid rgba(139,92,246,0.3);" onclick="startGame('vf')">
+        <div style="font-size:2rem;">❓</div>
+        <div class="card-title">Vrai ou Faux</div>
+        <p class="text-sm">10 affirmations — à toi de trancher !</p>
+        <button class="btn btn-purple btn-sm mt-1">Jouer</button>
+      </div>
+      <div class="card" style="text-align:center;cursor:pointer;border:2px solid rgba(34,197,94,0.3);" onclick="startGame('scramble')">
+        <div style="font-size:2rem;">🔤</div>
+        <div class="card-title">Mots mélangés</div>
+        <p class="text-sm">Retrouve les termes-clés du cours</p>
+        <button class="btn btn-green btn-sm mt-1">Jouer</button>
+      </div>
+    </div>
+
+    <!-- JEU : MATCHING -->
+    <div id="game-matching" style="display:none;margin-top:1.5rem;">
+      <div class="card">
+        <div class="card-title">🔗 Jeu des paires — Associe l'activité à son type</div>
+        <div class="form-group">
+          <label class="form-label">Joueur·euse :</label>
+          <select class="form-input form-select" id="matching-student"></select>
+        </div>
+        <div id="matching-board"></div>
+        <div id="matching-feedback" style="margin-top:1rem;display:none;"></div>
+        <button id="matching-new-btn" class="btn btn-primary btn-sm mt-1" onclick="setupMatchingGame()" style="display:none;">🔄 Nouvelle partie</button>
+      </div>
+    </div>
+
+    <!-- JEU : VRAI/FAUX -->
+    <div id="game-vf" style="display:none;margin-top:1.5rem;">
+      <div class="card">
+        <div class="card-title">❓ Vrai ou Faux</div>
+        <div class="form-group">
+          <label class="form-label">Joueur·euse :</label>
+          <select class="form-input form-select" id="vf-student"></select>
+        </div>
+        <div id="vf-area"></div>
+      </div>
+    </div>
+
+    <!-- JEU : SCRAMBLE -->
+    <div id="game-scramble" style="display:none;margin-top:1.5rem;">
+      <div class="card">
+        <div class="card-title">🔤 Mots mélangés</div>
+        <div class="form-group">
+          <label class="form-label">Joueur·euse :</label>
+          <select class="form-input form-select" id="scramble-student"></select>
+        </div>
+        <div id="scramble-area"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <button class="btn btn-primary" onclick="goTo('formative')">✏️ Éval formative →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 5 : ÉVAL FORMATIVE -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-formative">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Évaluation formative</div>
+      <div class="section-title">✏️ On consolide</div>
+      <div class="section-sub">10 questions avec feedback immédiat</div>
+    </div>
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="form-group">
+        <label class="form-label">Qui répond ?</label>
+        <select class="form-input form-select" id="form-student"></select>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="startFormative()">▶ Démarrer</button>
+    </div>
+    <div id="formative-area" style="display:none;">
+      <div class="quiz-wrap" id="formative-quiz-wrap">
+        <div id="formative-question-area"></div>
+        <div class="quiz-nav">
+          <span class="q-progress" id="formative-progress"></span>
+          <button class="btn btn-primary btn-sm" id="formative-next-btn" onclick="formativeNext()" style="display:none;">Suivant →</button>
+        </div>
+      </div>
+    </div>
+    <div id="formative-results" style="display:none;">
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji" id="form-emoji"></span>
+        <div class="section-title" id="form-score-text"></div>
+        <div class="section-sub" id="form-feedback-text"></div>
+        <div class="sep"></div>
+        <div id="form-mistakes-area"></div>
+        <button class="btn btn-primary mt-1" onclick="goTo('sommative')">→ Bilan final</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 6 : ÉVAL SOMMATIVE -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-sommative">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Évaluation sommative</div>
+      <div class="section-title">🏆 Le grand bilan</div>
+      <div class="section-sub">15 questions — cadre légal, classifications, types, posture pro 🏆</div>
+    </div>
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="form-group">
+        <label class="form-label">Qui répond ?</label>
+        <select class="form-input form-select" id="somm-student"></select>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="startSommative()">▶ Démarrer le chrono</button>
+    </div>
+    <div id="sommative-area" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="q-progress" id="somm-progress"></span>
+        <div class="timer-badge" id="somm-timer">⏱ --:--</div>
+      </div>
+      <div class="quiz-wrap" id="somm-quiz-wrap">
+        <div id="somm-question-area"></div>
+        <div class="quiz-nav">
+          <span></span>
+          <button class="btn btn-primary btn-sm" id="somm-next-btn" onclick="sommNext()" style="display:none;">Suivant →</button>
+        </div>
+      </div>
+    </div>
+    <div id="sommative-results" style="display:none;">
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji" id="somm-emoji"></span>
+        <div class="section-title" id="somm-score-text"></div>
+        <div class="section-sub" id="somm-feedback-text"></div>
+        <div class="sep"></div>
+        <div id="somm-mistakes-area"></div>
+        <button class="btn btn-primary mt-1" onclick="goTo('scores')">📊 Voir le classement</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ÉCRAN 7 : SCORES -->
+<!-- ============================================================ -->
+<div class="screen" id="screen-scores">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">📊 Tableau de bord</div>
+      <div class="section-title">Résultats de la classe</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showScoreTab('tableau',this)">Tableau complet</button>
+      <button class="tab-btn" onclick="showScoreTab('graphe',this)">Graphique</button>
+      <button class="tab-btn" onclick="showScoreTab('podium',this)">🏆 Podium</button>
+    </div>
+
+    <div id="score-tab-tableau">
+      <div class="scoreboard-wrap">
+        <table class="scores" id="score-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Prénom</th>
+              <th>Diag /5</th>
+              <th>Jeux</th>
+              <th>Formative /10</th>
+              <th>Sommative /15</th>
+              <th>Total /30</th>
+              <th>Mention</th>
+            </tr>
+          </thead>
+          <tbody id="score-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 Exporter CSV</button>
+        <button class="btn btn-outline btn-sm" onclick="clearScores()">🗑 Réinitialiser</button>
+        <button class="btn btn-primary btn-sm" onclick="refreshScores()">🔄 Actualiser</button>
+      </div>
+    </div>
+
+    <div id="score-tab-graphe" style="display:none;">
+      <div class="card">
+        <div class="card-title">Comparaison des scores sommative /15</div>
+        <div class="bar-chart" id="bar-chart-area" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <div id="score-tab-podium" style="display:none;">
+      <div id="podium-area"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" style="display:none;"></div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+// ============ STATE ============
+let participants = [];
+let scores = {};
+let diagState = {}, formState = {}, sommState = {};
+
+const SCREENS = ['accueil','participants','diag','cartes','cours','jeux','formative','sommative','scores'];
+const SCREEN_PROGRESS = {accueil:0,participants:10,diag:20,cartes:30,cours:40,jeux:55,formative:70,sommative:85,scores:100};
+
+// ============ NAVIGATION ============
+function goTo(id) {
+  SCREENS.forEach(s => {
+    document.getElementById('screen-'+s)?.classList.remove('active');
+    document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.remove('active'));
+  });
+  document.getElementById('screen-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if(b.getAttribute('onclick')?.includes("'"+id+"'")) b.classList.add('active');
+  });
+  document.getElementById('progress-fill').style.width = (SCREEN_PROGRESS[id]||0)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if(id==='diag') { populateSelect('diag-student'); initDiag(); }
+  if(id==='cartes') { initCartes(); }
+  if(id==='jeux') { populateSelect('matching-student'); populateSelect('vf-student'); populateSelect('scramble-student'); }
+  if(id==='formative') { populateSelect('form-student'); }
+  if(id==='sommative') { populateSelect('somm-student'); }
+  if(id==='scores') { refreshScores(); }
+}
+
+// ============ PARTICIPANTS ============
+function generateParticipantFields() {
+  const n = parseInt(document.getElementById('nb-students').value) || 15;
+  const grid = document.getElementById('participant-fields');
+  grid.innerHTML = '';
+  for(let i=1;i<=n;i++) {
+    const inp = document.createElement('input');
+    inp.type='text'; inp.className='participant-input';
+    inp.placeholder='Élève '+i; inp.id='p-'+i;
+    const saved = participants[i-1];
+    if(saved) inp.value = saved;
+    grid.appendChild(inp);
+  }
+}
+
+function saveParticipants() {
+  const n = parseInt(document.getElementById('nb-students').value)||15;
+  participants = [];
+  for(let i=1;i<=n;i++) {
+    const v = document.getElementById('p-'+i)?.value.trim();
+    participants.push(v || 'Élève '+i);
+  }
+  participants.forEach(p => { if(!scores[p]) scores[p]={diag:null,formative:null,sommative:null,jeux:0}; });
+  saveToStorage();
+  document.getElementById('participant-confirm').style.display='block';
+  document.getElementById('participant-count').textContent = participants.length;
+  showToast('✅ '+participants.length+' participants enregistrés !');
+}
+
+function populateSelect(id) {
+  const sel = document.getElementById(id);
+  if(!sel) return;
+  sel.innerHTML = participants.map(p=>`<option value="${p}">${p}</option>`).join('');
+}
+
+// ============ STORAGE ============
+function saveToStorage() {
+  try {
+    localStorage.setItem('anim_participants', JSON.stringify(participants));
+    localStorage.setItem('anim_scores', JSON.stringify(scores));
+  } catch(e) {}
+}
+function loadFromStorage() {
+  try {
+    const p = localStorage.getItem('anim_participants');
+    const s = localStorage.getItem('anim_scores');
+    if(p) participants = JSON.parse(p);
+    if(s) scores = JSON.parse(s);
+  } catch(e) {}
+}
+
+// ============ TOAST ============
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none', dur);
+}
+
+// ============ QUIZ ENGINE ============
+function renderQuestion(q, onAnswer, containerId, feedbackId) {
+  const area = document.getElementById(containerId);
+  area.innerHTML = `
+    <div class="question-num">Question ${q.num} / ${q.total}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="choices" id="${containerId}-choices">
+      ${q.choices.map((c,i)=>`<button class="choice-btn" onclick="selectChoice(this, ${i}, ${q.correct}, '${containerId}', '${feedbackId}', function(ok){ ${onAnswer} })">${c}</button>`).join('')}
+    </div>
+    <div class="feedback-box" id="${feedbackId}"></div>
+  `;
+}
+
+function selectChoice(btn, idx, correct, containerId, feedbackId, _) {
+  const allBtns = document.querySelectorAll('#'+containerId+'-choices .choice-btn');
+  allBtns.forEach(b=>b.disabled=true);
+  const fb = document.getElementById(feedbackId);
+  const ok = idx === correct;
+  btn.classList.add(ok ? 'correct' : 'wrong');
+  if(!ok) allBtns[correct].classList.add('reveal-correct');
+  fb.className = 'feedback-box show '+(ok?'good':'bad');
+  fb.innerHTML = ok ? '✅ '+btn.__feedbackGood : '❌ Pas tout à fait. '+btn.__feedbackBad;
+  return ok;
+}
+
+// Because inline onclick can't easily pass complex data, we use a data-driven approach:
+function attachFeedback(containerId, questions, qIdx) {
+  const btns = document.querySelectorAll('#'+containerId+'-choices .choice-btn');
+  btns.forEach((b,i) => {
+    b.__feedbackGood = questions[qIdx].feedbackGood || 'Bonne réponse !';
+    b.__feedbackBad = questions[qIdx].feedbackBad || 'Relis le cours sur ce point.';
+  });
+}
+
+// ============ QUESTIONS DATA ============
+const DIAG_QUESTIONS = [
+  {text:"Quelle animation favorise principalement le lien social et l'inclusion ?",choices:["Animation Cognitive 🧠","Animation Sociale 🤝","Animation Motrice 💪","Animation Culturelle"],correct:1,feedbackGood:"Exactement ! L'animation sociale crée du lien, réduit l'isolement.",feedbackBad:"L'animation sociale est celle qui vise le lien social et l'inclusion. La cognitive stimule l'esprit, la motrice le corps."},
+  {text:"Qu'est-ce que le SMART dans 'objectifs SMART' ?",choices:["Un type d'animation","Un sigle : Spécifique Mesurable Atteignable Réaliste Temporel","Le nom d'une loi","Une méthode d'évaluation médicale"],correct:1,feedbackGood:"Parfait ! SMART = Spécifique, Mesurable, Atteignable, Réaliste, Temporel.",feedbackBad:"SMART est un acronyme : Spécifique, Mesurable, Atteignable, Réaliste, Temporel."},
+  {text:"En EHPAD, la gym douce doit être pratiquée :",choices:["Debout pour travailler l'équilibre","Toujours en extérieur","En position assise de préférence","À jeun le matin"],correct:2,feedbackGood:"Oui ! En EHPAD, les activités motrices sont assises pour prévenir les chutes.",feedbackBad:"En EHPAD, les activités motrices sont réalisées en position assise. Les activités debout relèvent des kinésithérapeutes."},
+  {text:"La loi 2002-2 concerne :",choices:["Le droit du travail","Les droits des usagers","L'école obligatoire","Le Code de la route"],correct:1,feedbackGood:"Bien vu ! La loi 2002-2 est fondamentale pour les droits des usagers.",feedbackBad:"La loi 2002-2 porte sur les droits des usagers des établissements sociaux et médico-sociaux."},
+  {text:"Combien d'étapes comporte la préparation d'une animation ?",choices:["3","4","6","8"],correct:2,feedbackGood:"Parfait ! 6 étapes : Besoins → SMART → Planification → Préparation → Animation → Évaluation.",feedbackBad:"Il y a 6 étapes : Recueil des besoins, Objectifs SMART, Planification, Préparation, Animation, Évaluation."},
+];
+
+const FORMATIVE_QUESTIONS = [
+  {text:"Laquelle de ces activités est principalement une animation COGNITIVE ?",choices:["Pétanque en salle","Atelier mémoire illustrée","Tournoi de jeux coopératifs","Parcours moteur"],correct:1,feedbackGood:"Oui ! L'atelier mémoire stimule les fonctions cognitives.",feedbackBad:"L'atelier mémoire illustrée est typiquement cognitif. La pétanque est motrice, le tournoi coopératif est social, le parcours moteur est moteur."},
+  {text:"Que doit-on consulter AVANT toute animation motrice en IME ?",choices:["Le menu du jour","Le dossier + PAI","Le planning des sorties","La météo"],correct:1,feedbackGood:"Impeccable ! Le dossier et le PAI sont indispensables avant toute animation motrice.",feedbackBad:"Le dossier individuel ET le PAI (Projet d'Accueil Individualisé) doivent être consultés avant toute animation motrice."},
+  {text:"En cas de crise d'épilepsie > 5 minutes, on appelle :",choices:["Le médecin traitant de la famille","Le 15 (SAMU)","Le 17 (Police)","On attend que ça passe"],correct:1,feedbackGood:"Absolument ! Crise > 5 min = appel immédiat au 15.",feedbackBad:"Une crise d'épilepsie de plus de 5 minutes = appel SAMU au 15 en urgence absolue."},
+  {text:"L'animation SOCIALE selon la classification BAC ASSP correspond à :",choices:["Physique + Créative motricité fine","Ludique logique + Culturelle créative","Culturelle + Ludique coopératif","Artistique + Sportive"],correct:2,feedbackGood:"Parfait ! Sociale = Culturelle + Ludique coopératif dans la classification BAC.",feedbackBad:"Dans la classification BAC ASSP/BPJEPS : Sociale = Culturelle + Ludique coopératif."},
+  {text:"'Chaque résident prend la parole au moins 2 fois' est un objectif :",choices:["Général","SMART","Thérapeutique","Pédagogique uniquement"],correct:1,feedbackGood:"Oui ! Cet objectif est Spécifique, Mesurable, Atteignable, Réaliste, Temporel.",feedbackBad:"Cet objectif est SMART car il est précis (spécifique), comptable (mesurable) et atteignable."},
+  {text:"Quelle posture adopter face à un élève DYS ou TDAH en animation cognitive ?",choices:["Le mettre en compétition pour le motiver","Lui donner des activités très longues","Supports visuels, activités courtes, valorisation systématique","L'écarter pour ne pas freiner le groupe"],correct:2,feedbackGood:"Excellent ! Adapter les supports et valoriser systématiquement est la bonne attitude.",feedbackBad:"Pour DYS/TDAH : supports visuels, activités courtes, valorisation systématique. Jamais de mise en échec."},
+  {text:"L'étape 'Évaluation' dans les 6 étapes correspond à :",choices:["Tester l'activité avant","Regarder les résultats sportifs","Observer, noter dans le dossier, transmettre à l'équipe","Demander aux résidents leur préférence"],correct:2,feedbackGood:"Exact ! L'évaluation c'est observer, tracer dans le dossier et transmettre.",feedbackBad:"L'étape 6 = Observer, noter dans le dossier, transmettre à l'équipe soignante ou éducative."},
+  {text:"Pendant une crise d'épilepsie, que NE faut-il PAS faire ?",choices:["Protéger la tête","Chronométrer la durée","Mettre un objet dans la bouche","Éloigner les autres participants"],correct:2,feedbackGood:"Parfait ! On ne met JAMAIS rien dans la bouche lors d'une crise d'épilepsie.",feedbackBad:"JAMAIS mettre d'objet dans la bouche. On protège la tête, on chronométre, on éloigne les autres."},
+  {text:"L'animation motrice en EHPAD inclut typiquement :",choices:["Escalade","Marche nordique rapide","Danse fauteuil et gym douce assise","Sprint chronométré"],correct:2,feedbackGood:"Oui ! Danse fauteuil et gym douce assise sont adaptées aux résidents EHPAD.",feedbackBad:"En EHPAD : danse fauteuil, gym douce assise, pétanque adaptée. Pas d'activités à risque de chute."},
+  {text:"Le PPA signifie :",choices:["Programme Pédagogique Adapté","Projet Personnalisé d'Accompagnement","Plan de Prévention des Accidents","Protocole Pour les Animateurs"],correct:1,feedbackGood:"Excellent ! PPA = Projet Personnalisé d'Accompagnement.",feedbackBad:"PPA = Projet Personnalisé d'Accompagnement. C'est le document qui guide l'accompagnement individualisé de l'usager."},
+];
+
+const SOMMATIVE_QUESTIONS = [
+  ...FORMATIVE_QUESTIONS,
+  {text:"L'ALSH est :",choices:["Un établissement pour adultes dépendants","Un Accueil de Loisirs Sans Hébergement","Un type d'animation","Un sigle médical"],correct:1,feedbackGood:"Correct ! ALSH = Accueil de Loisirs Sans Hébergement.",feedbackBad:"ALSH = Accueil de Loisirs Sans Hébergement (anciennement centre aéré)."},
+  {text:"Une activité de jeu de mémoire illustrée appartient à quelle classification médico-sociale ?",choices:["Sociale","Motrice","Cognitive","Culturelle"],correct:2,feedbackGood:"Oui ! Le jeu de mémoire illustré stimule les fonctions cognitives.",feedbackBad:"Le jeu de mémoire est une animation cognitive : il stimule la mémoire à court et long terme."},
+  {text:"L'IDE doit être appelé·e après une crise d'épilepsie :",choices:["Le lendemain matin","Seulement si la crise dure > 10 min","Immédiatement après la crise","Uniquement si le patient le demande"],correct:2,feedbackGood:"Exact ! L'IDE est appelé·e immédiatement après la crise.",feedbackBad:"L'IDE doit être appelé·e immédiatement. Et si crise > 5 min, c'est le SAMU (15)."},
+  {text:"La loi 2005-102 concerne :",choices:["La retraite","L'égalité des droits et des chances des personnes handicapées","La protection de l'enfance","Le droit au logement"],correct:1,feedbackGood:"Parfait ! La loi 2005-102 est la grande loi sur le handicap.",feedbackBad:"La loi 2005-102 porte sur l'égalité des droits et des chances des personnes en situation de handicap."},
+  {text:"Lors d'une animation SOCIALE, quelle règle est TOUJOURS à respecter ?",choices:["Avoir au moins 10 participants","Toujours faire de la compétition","Vérifier le consentement et l'inclusivité","Faire durer l'activité plus de 2 heures"],correct:2,feedbackGood:"Excellent ! Le consentement et l'inclusivité sont non négociables.",feedbackBad:"En animation sociale : toujours vérifier le consentement et garantir l'inclusivité de chaque participant."},
+];
+
+
+// ============ CARTES MENTALES ============
+function initCartes() {
+  const liste = document.getElementById('cartes-liste');
+  if(!liste) return;
+  liste.innerHTML = '';
+  const ps = participants.length > 0 ? participants : ['Apprenant 1','Apprenant 2','Apprenant 3'];
+  ps.forEach(function(p) {
+    const done = scores[p] && scores[p].carte;
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.6rem;border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all 0.2s;background:'+(done?'rgba(34,197,94,0.18)':'rgba(255,255,255,0.06)')+';border:1px solid '+(done?'rgba(34,197,94,0.4)':'rgba(255,255,255,0.12)')+';';
+    div.innerHTML = '<span style="font-size:1rem;">'+(done?'✅':'⬜')+'</span><span>'+p+'</span>';
+    div.onclick = function() {
+      if(!scores[p]) scores[p] = {diag:null,formative:null,sommative:null,jeux:0};
+      scores[p].carte = !scores[p].carte;
+      saveToStorage();
+      initCartes();
+    };
+    liste.appendChild(div);
+  });
+}
+
+// ============ ÉVAL DIAGNOSTIQUE ============
+let diagIdx = 0; let diagScore = 0; let diagStudent = '';
+
+function initDiag() {
+  diagIdx=0; diagScore=0;
+  document.getElementById('diag-results').style.display='none';
+  document.getElementById('diag-quiz-wrap').style.display='block';
+  renderDiagQuestion();
+}
+
+function renderDiagQuestion() {
+  const qs = DIAG_QUESTIONS;
+  if(diagIdx >= qs.length) { showDiagResults(); return; }
+  const q = {...qs[diagIdx], num:diagIdx+1, total:qs.length};
+  const area = document.getElementById('diag-question-area');
+  area.innerHTML = `
+    <div class="question-num">Question ${q.num} / ${q.total}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="choices" id="diag-choices">
+      ${q.choices.map((c,i)=>`<button class="choice-btn" data-idx="${i}" onclick="diagAnswer(this,${i},${q.correct})">${c}</button>`).join('')}
+    </div>
+    <div class="feedback-box" id="diag-fb"></div>
+  `;
+  document.getElementById('diag-next-btn').style.display='none';
+  document.getElementById('diag-progress').textContent = `${diagIdx+1} / ${qs.length}`;
+}
+
+function diagAnswer(btn, idx, correct) {
+  const btns = document.querySelectorAll('#diag-choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok = idx===correct;
+  if(ok) diagScore++;
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) btns[correct].classList.add('reveal-correct');
+  const fb = document.getElementById('diag-fb');
+  fb.className='feedback-box show '+(ok?'good':'bad');
+  fb.innerHTML = ok ? '✅ '+DIAG_QUESTIONS[diagIdx].feedbackGood : '❌ '+DIAG_QUESTIONS[diagIdx].feedbackBad;
+  document.getElementById('diag-next-btn').style.display='inline-flex';
+}
+
+function diagNext() {
+  diagIdx++;
+  renderDiagQuestion();
+}
+
+function showDiagResults() {
+  const pct = diagScore/DIAG_QUESTIONS.length;
+  const em = pct>=0.8?'🌟':pct>=0.5?'💪':'🤔';
+  const msg = pct>=0.8?'Excellent niveau de départ !':pct>=0.5?'Bonne base, le cours va tout consolider !':'Pas de souci, tu es au bon endroit 😊';
+  document.getElementById('diag-emoji').textContent=em;
+  document.getElementById('diag-score-text').textContent=`${diagScore} / ${DIAG_QUESTIONS.length}`;
+  document.getElementById('diag-feedback-text').textContent=msg;
+  document.getElementById('diag-quiz-wrap').style.display='none';
+  document.getElementById('diag-results').style.display='block';
+  const student = document.getElementById('diag-student').value;
+  if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+  scores[student].diag = diagScore;
+  saveToStorage();
+  showToast('Score diagnostique enregistré pour '+student+' !');
+}
+
+// ============ COURS TABS ============
+function showCoursTopic(id, btn) {
+  document.querySelectorAll('.cours-topic').forEach(t=>t.style.display='none');
+  document.getElementById('topic-'+id).style.display='block';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ============ JEU MATCHING ============
+const MATCHING_DATA = [
+  {activity:"🎴 Jeu de mémoire illustrée",type:"Cognitive 🧠",color:"var(--cognitive)"},
+  {activity:"🤸 Parcours moteur adapté",type:"Motrice 💪",color:"var(--motrice)"},
+  {activity:"👥 Conseil d'enfants",type:"Sociale 🤝",color:"var(--sociale)"},
+  {activity:"♟️ Jeu d'échecs simplifié",type:"Cognitive 🧠",color:"var(--cognitive)"},
+  {activity:"💃 Danse fauteuil",type:"Motrice 💪",color:"var(--motrice)"},
+  {activity:"🤝 Atelier tutorat entre pairs",type:"Sociale 🤝",color:"var(--sociale)"},
+];
+
+let matchSelected = null; let matchScore = 0; let matchTotal = 0; let matchMatched = new Set();
+
+function startGame(id) {
+  document.getElementById('game-matching').style.display='none';
+  document.getElementById('game-vf').style.display='none';
+  document.getElementById('game-scramble').style.display='none';
+  document.getElementById('game-'+id).style.display='block';
+  if(id==='matching') setupMatchingGame();
+  if(id==='vf') setupVF();
+  if(id==='scramble') setupScramble();
+}
+
+function setupMatchingGame() {
+  matchSelected=null; matchScore=0; matchTotal=MATCHING_DATA.length; matchMatched=new Set();
+  const board = document.getElementById('matching-board');
+  const activities = [...MATCHING_DATA].sort(()=>Math.random()-0.5);
+  const types = [...MATCHING_DATA].sort(()=>Math.random()-0.5);
+  board.innerHTML = `
+    <p class="text-sm" style="margin-bottom:1rem;">🔗 Clique sur une activité puis sur son type d'animation</p>
+    <div class="match-grid">
+      <div>
+        ${activities.map((d,i)=>`<div class="match-item" data-role="activity" data-pair="${d.type}" onclick="matchClick(this)">${d.activity}</div>`).join('')}
+      </div>
+      <div>
+        ${types.map((d,i)=>`<div class="match-item" data-role="type" data-pair="${d.type}" onclick="matchClick(this)">${d.type}</div>`).join('')}
+      </div>
+    </div>
+    <div class="quiz-nav mt-1">
+      <span class="q-progress">✅ Paires trouvées : <span id="match-count">0</span> / ${MATCHING_DATA.length}</span>
+    </div>
+  `;
+  document.getElementById('matching-feedback').style.display='none';
+  document.getElementById('matching-new-btn').style.display='none';
+}
+
+function matchClick(el) {
+  if(el.classList.contains('matched-correct')) return;
+  if(matchSelected===el) { el.classList.remove('selected'); matchSelected=null; return; }
+  if(!matchSelected) { matchSelected=el; el.classList.add('selected'); return; }
+  const a=matchSelected, b=el;
+  matchSelected=null; a.classList.remove('selected');
+  if(a.dataset.role===b.dataset.role) { showToast('⚠️ Choisis une activité ET un type !'); return; }
+  if(a.dataset.pair===b.dataset.pair) {
+    a.classList.add('matched-correct'); b.classList.add('matched-correct');
+    matchScore++; matchTotal--;
+    document.getElementById('match-count').textContent=matchScore;
+    showToast('🎉 Bonne paire !');
+    if(matchTotal===0) endMatchingGame();
+  } else {
+    a.classList.add('matched-wrong'); b.classList.add('matched-wrong');
+    setTimeout(()=>{a.classList.remove('matched-wrong');b.classList.remove('matched-wrong');},700);
+    showToast('❌ Pas cette combinaison...');
+  }
+}
+
+function endMatchingGame() {
+  const fb = document.getElementById('matching-feedback');
+  fb.style.display='block';
+  fb.innerHTML=`<div class="info-box info-green"><strong>🏆 Parfait ! Toutes les paires trouvées !</strong><br><span class="text-sm">Score enregistré pour ${document.getElementById('matching-student').value}</span></div>`;
+  const student = document.getElementById('matching-student').value;
+  if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+  scores[student].jeux = (scores[student].jeux||0)+1;
+  saveToStorage();
+  document.getElementById('matching-new-btn').style.display='inline-flex';
+}
+
+// ============ VRAI/FAUX ============
+const VF_DATA = [
+  {s:"En EHPAD, les activités motrices doivent toujours être réalisées en position debout pour travailler l'équilibre.",correct:false,explication:"FAUX ! En EHPAD, les activités motrices sont réalisées en position assise pour prévenir les chutes."},
+  {s:"Un objectif SMART doit être mesurable et vérifiable.",correct:true,explication:"VRAI ! Le M de SMART = Mesurable (on peut vérifier si l'objectif est atteint)."},
+  {s:"La loi 2002-2 concerne uniquement les personnes handicapées.",correct:false,explication:"FAUX ! La loi 2002-2 concerne les droits des usagers de tous les établissements sociaux et médico-sociaux."},
+  {s:"L'animation cognitive peut inclure des jeux de mémoire illustrés.",correct:true,explication:"VRAI ! Les jeux de mémoire illustrés stimulent la mémoire à court et long terme."},
+  {s:"Lors d'une crise d'épilepsie, on doit retenir les membres du patient pour éviter les blessures.",correct:false,explication:"FAUX ! On NE retient JAMAIS les mouvements. On protège la tête et on chronométre."},
+  {s:"L'ALSH accueille des enfants avec hébergement sur plusieurs jours.",correct:false,explication:"FAUX ! ALSH = Accueil de Loisirs SANS Hébergement (journée ou demi-journée)."},
+  {s:"L'animation sociale vise à développer le lien social et la citoyenneté.",correct:true,explication:"VRAI ! C'est exactement l'objectif principal de l'animation sociale."},
+  {s:"Le PAI doit être consulté avant toute animation motrice.",correct:true,explication:"VRAI ! Le Projet d'Accueil Individualisé est indispensable pour adapter l'animation."},
+  {s:"Une même activité peut appartenir à plusieurs types d'animations simultanément.",correct:true,explication:"VRAI ! C'est même le débat sur la classification qui est formateur !"},
+  {s:"Si une crise d'épilepsie dure 3 minutes, on appelle le SAMU.",correct:false,explication:"FAUX ! Le SAMU est appelé si la crise dure PLUS DE 5 MINUTES. En dessous, on appelle l'IDE."},
+];
+
+let vfIdx=0; let vfScore=0;
+
+function setupVF() {
+  vfIdx=0; vfScore=0;
+  renderVF();
+}
+
+function renderVF() {
+  const area = document.getElementById('vf-area');
+  if(vfIdx >= VF_DATA.length) {
+    const pct=vfScore/VF_DATA.length;
+    const em=pct>=0.8?'🌟':pct>=0.5?'💪':'🤔';
+    area.innerHTML=`
+      <div class="vf-card">
+        <div style="font-size:3rem;">${em}</div>
+        <div class="section-title" style="margin:0.5rem 0;">${vfScore} / ${VF_DATA.length}</div>
+        <p class="text-sm">${pct>=0.8?'Excellent ! Tu maîtrises le cours.':pct>=0.5?'Bon score ! Relis les points ratés.':'Courage ! Reviens sur le cours.'}</p>
+        <button class="btn btn-purple btn-sm mt-1" onclick="setupVF()">🔄 Rejouer</button>
+      </div>
+    `;
+    const student = document.getElementById('vf-student').value;
+    if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+    scores[student].jeux = (scores[student].jeux||0)+1;
+    saveToStorage();
+    return;
+  }
+  const q=VF_DATA[vfIdx];
+  area.innerHTML=`
+    <p class="text-sm" style="margin-bottom:0.5rem;">Question ${vfIdx+1} / ${VF_DATA.length}</p>
+    <div class="vf-card">
+      <div class="vf-statement">${q.s}</div>
+      <div class="vf-btns">
+        <button class="vf-btn vf-btn-v" onclick="answerVF(true)">✅ VRAI</button>
+        <button class="vf-btn vf-btn-f" onclick="answerVF(false)">❌ FAUX</button>
+      </div>
+      <div class="feedback-box" id="vf-fb"></div>
+    </div>
+  `;
+}
+
+function answerVF(answer) {
+  const q=VF_DATA[vfIdx];
+  const ok=answer===q.correct;
+  if(ok) vfScore++;
+  document.querySelectorAll('.vf-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('vf-fb');
+  fb.className='feedback-box show '+(ok?'good':'bad');
+  fb.innerHTML=(ok?'✅ ':'❌ ')+q.explication+'<br><br><button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:#fff;border:none;cursor:pointer;" onclick="vfIdx++;renderVF()">Suivant →</button>';
+}
+
+// ============ MOT MÉLANGÉ ============
+const SCRAMBLE_WORDS = [
+  {word:"EHPAD",hint:"Établissement pour personnes âgées dépendantes"},
+  {word:"COGNITIVE",hint:"Type d'animation qui stimule la mémoire et le raisonnement"},
+  {word:"SOCIALE",hint:"Type d'animation qui favorise le lien et l'inclusion"},
+  {word:"MOTRICE",hint:"Type d'animation qui travaille le corps"},
+  {word:"CONSENTEMENT",hint:"Ce qu'on vérifie toujours avant une animation sociale"},
+  {word:"SMART",hint:"Acronyme pour des objectifs bien formulés"},
+  {word:"EPILEPSIE",hint:"Pathologie nécessitant une CAT spécifique"},
+  {word:"PAI",hint:"Document à consulter avant une animation motrice"},
+];
+
+let scrIdx=0; let scrScore=0; let scrCurrent=[];
+
+function setupScramble() {
+  scrIdx=0; scrScore=0;
+  scrCurrent=[...SCRAMBLE_WORDS].sort(()=>Math.random()-0.5);
+  renderScramble();
+}
+
+function scramble(word) {
+  const arr=word.split('');
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr.join('');
+}
+
+function renderScramble() {
+  const area=document.getElementById('scramble-area');
+  if(scrIdx>=scrCurrent.length){
+    const pct=scrScore/scrCurrent.length;
+    area.innerHTML=`
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3rem;">${pct>=0.7?'🌟':'💪'}</div>
+        <div class="section-title" style="margin:0.5rem 0;">${scrScore} / ${scrCurrent.length} trouvés !</div>
+        <button class="btn btn-green btn-sm mt-1" onclick="setupScramble()">🔄 Nouveau jeu</button>
+      </div>
+    `;
+    const student=document.getElementById('scramble-student').value;
+    if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+    scores[student].jeux=(scores[student].jeux||0)+1;
+    saveToStorage();
+    return;
+  }
+  const w=scrCurrent[scrIdx];
+  const sc=scramble(w.word);
+  area.innerHTML=`
+    <div class="scramble-wrap">
+      <p class="text-sm" style="margin-bottom:0.5rem;">Mot ${scrIdx+1} / ${scrCurrent.length} — Score: ${scrScore}/${scrIdx}</p>
+      <div class="scrambled-word">${sc}</div>
+      <p class="scramble-hint">💡 ${w.hint}</p>
+      <input class="scramble-input" id="scr-input" type="text" placeholder="Tape le mot..."
+        oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')checkScramble()">
+      <div style="margin-top:1rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-green btn-sm" onclick="checkScramble()">✅ Valider</button>
+        <button class="btn btn-outline btn-sm" onclick="skipScramble()">⏭ Passer</button>
+      </div>
+      <div class="feedback-box" id="scr-fb"></div>
+    </div>
+  `;
+  setTimeout(()=>document.getElementById('scr-input')?.focus(),100);
+}
+
+function checkScramble() {
+  const inp=document.getElementById('scr-input').value.trim().toUpperCase();
+  const w=scrCurrent[scrIdx];
+  const fb=document.getElementById('scr-fb');
+  if(inp===w.word){
+    scrScore++; scrIdx++;
+    fb.className='feedback-box show good';
+    fb.innerHTML='🎉 Bravo ! C\'était bien <strong>'+w.word+'</strong>';
+    document.querySelectorAll('#scramble-area input, #scramble-area button').forEach(b=>b.disabled=true);
+    setTimeout(renderScramble,1000);
+  } else {
+    fb.className='feedback-box show bad';
+    fb.innerHTML='❌ Pas tout à fait... Réessaie !';
+  }
+}
+
+function skipScramble() {
+  const w=scrCurrent[scrIdx];
+  const fb=document.getElementById('scr-fb');
+  fb.className='feedback-box show bad';
+  fb.innerHTML='⏭ C\'était : <strong>'+w.word+'</strong>';
+  document.querySelectorAll('#scramble-area input, #scramble-area button').forEach(b=>b.disabled=true);
+  scrIdx++;
+  setTimeout(renderScramble,1200);
+}
+
+// ============ ÉVAL FORMATIVE ============
+let formIdx=0; let formScore=0; let formMistakes=[];
+
+function startFormative() {
+  formIdx=0; formScore=0; formMistakes=[];
+  document.getElementById('formative-area').style.display='block';
+  document.getElementById('formative-results').style.display='none';
+  renderFormative();
+}
+
+function renderFormative() {
+  const qs=FORMATIVE_QUESTIONS;
+  if(formIdx>=qs.length){ showFormativeResults(); return; }
+  const q={...qs[formIdx],num:formIdx+1,total:qs.length};
+  const area=document.getElementById('formative-question-area');
+  area.innerHTML=`
+    <div class="question-num">Question ${q.num} / ${q.total}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="choices" id="form-choices">
+      ${q.choices.map((c,i)=>`<button class="choice-btn" onclick="formAnswer(this,${i},${q.correct})">${c}</button>`).join('')}
+    </div>
+    <div class="feedback-box" id="form-fb"></div>
+  `;
+  document.getElementById('formative-progress').textContent=`${formIdx+1} / ${qs.length}`;
+  document.getElementById('formative-next-btn').style.display='none';
+}
+
+function formAnswer(btn,idx,correct) {
+  const btns=document.querySelectorAll('#form-choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok=idx===correct;
+  if(ok) formScore++;
+  else formMistakes.push({q:FORMATIVE_QUESTIONS[formIdx].text, correct:FORMATIVE_QUESTIONS[formIdx].choices[correct]});
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) btns[correct].classList.add('reveal-correct');
+  const fb=document.getElementById('form-fb');
+  fb.className='feedback-box show '+(ok?'good':'bad');
+  fb.innerHTML=ok?'✅ '+FORMATIVE_QUESTIONS[formIdx].feedbackGood:'❌ '+FORMATIVE_QUESTIONS[formIdx].feedbackBad;
+  document.getElementById('formative-next-btn').style.display='inline-flex';
+}
+
+function formativeNext() { formIdx++; renderFormative(); }
+
+function showFormativeResults() {
+  const pct=formScore/FORMATIVE_QUESTIONS.length;
+  document.getElementById('form-emoji').textContent=pct>=0.8?'🌟':pct>=0.6?'💪':'🤔';
+  document.getElementById('form-score-text').textContent=`${formScore} / ${FORMATIVE_QUESTIONS.length}`;
+  document.getElementById('form-feedback-text').textContent=pct>=0.8?'Excellent ! Tu es prêt·e pour le bilan.':pct>=0.6?'Bon travail ! Relis les points ratés.':'Continue ! Le bilan va t\'aider.';
+  if(formMistakes.length>0){
+    document.getElementById('form-mistakes-area').innerHTML=`
+      <div class="info-box info-red"><strong>Points à revoir :</strong><br>${formMistakes.map(m=>`• ${m.q}<br><em style="color:var(--green)">→ ${m.correct}</em>`).join('<br><br>')}</div>
+    `;
+  }
+  document.getElementById('formative-area').style.display='none';
+  document.getElementById('formative-results').style.display='block';
+  const student=document.getElementById('form-student').value;
+  if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+  scores[student].formative=formScore;
+  saveToStorage();
+  showToast('Score formative enregistré pour '+student+' !');
+}
+
+// ============ ÉVAL SOMMATIVE ============
+let sommIdx=0; let sommScore=0; let sommMistakes=[];
+let sommTimer=null; let sommSeconds=0;
+
+function startSommative() {
+  sommIdx=0; sommScore=0; sommMistakes=[]; sommSeconds=0;
+  clearInterval(sommTimer);
+  document.getElementById('sommative-area').style.display='block';
+  document.getElementById('sommative-results').style.display='none';
+  sommTimer=setInterval(()=>{
+    sommSeconds++;
+    const m=Math.floor(sommSeconds/60).toString().padStart(2,'0');
+    const s=(sommSeconds%60).toString().padStart(2,'0');
+    const tb=document.getElementById('somm-timer');
+    tb.textContent='⏱ '+m+':'+s;
+    if(sommSeconds>1200) tb.classList.add('warning'); // >20min warning
+  },1000);
+  renderSommative();
+}
+
+function renderSommative() {
+  const qs=SOMMATIVE_QUESTIONS;
+  if(sommIdx>=qs.length){ showSommResults(); return; }
+  const q={...qs[sommIdx],num:sommIdx+1,total:qs.length};
+  const area=document.getElementById('somm-question-area');
+  area.innerHTML=`
+    <div class="question-num">Question ${q.num} / ${q.total}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="choices" id="somm-choices">
+      ${q.choices.map((c,i)=>`<button class="choice-btn" onclick="sommAnswer(this,${i},${q.correct})">${c}</button>`).join('')}
+    </div>
+    <div class="feedback-box" id="somm-fb"></div>
+  `;
+  document.getElementById('somm-progress').textContent=`${sommIdx+1} / ${qs.length}`;
+  document.getElementById('somm-next-btn').style.display='none';
+}
+
+function sommAnswer(btn,idx,correct) {
+  const btns=document.querySelectorAll('#somm-choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok=idx===correct;
+  if(ok) sommScore++;
+  else sommMistakes.push({q:SOMMATIVE_QUESTIONS[sommIdx].text, correct:SOMMATIVE_QUESTIONS[sommIdx].choices[correct]});
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) btns[correct].classList.add('reveal-correct');
+  const fb=document.getElementById('somm-fb');
+  fb.className='feedback-box show '+(ok?'good':'bad');
+  fb.innerHTML=ok?'✅ '+SOMMATIVE_QUESTIONS[sommIdx].feedbackGood:'❌ '+SOMMATIVE_QUESTIONS[sommIdx].feedbackBad;
+  document.getElementById('somm-next-btn').style.display='inline-flex';
+}
+
+function sommNext() { sommIdx++; renderSommative(); }
+
+function showSommResults() {
+  clearInterval(sommTimer);
+  const pct=sommScore/SOMMATIVE_QUESTIONS.length;
+  const m=Math.floor(sommSeconds/60); const s=sommSeconds%60;
+  document.getElementById('somm-emoji').textContent=pct>=0.8?'🏆':pct>=0.6?'🌟':'💪';
+  document.getElementById('somm-score-text').textContent=`${sommScore} / ${SOMMATIVE_QUESTIONS.length}`;
+  document.getElementById('somm-feedback-text').textContent=`${pct>=0.8?'Maîtrise excellente !':pct>=0.6?'Bon niveau !':'À consolider...'} Temps : ${m}min ${s}s`;
+  if(sommMistakes.length>0){
+    document.getElementById('somm-mistakes-area').innerHTML=`
+      <div class="info-box info-red"><strong>Points à revoir :</strong><br>${sommMistakes.map(m=>`• ${m.q}<br><em style="color:var(--green)">→ ${m.correct}</em>`).join('<br><br>')}</div>
+    `;
+  }
+  document.getElementById('sommative-area').style.display='none';
+  document.getElementById('sommative-results').style.display='block';
+  const student=document.getElementById('somm-student').value;
+  if(!scores[student]) scores[student]={diag:null,formative:null,sommative:null,jeux:0};
+  scores[student].sommative=sommScore;
+  scores[student].sommTime=sommSeconds;
+  saveToStorage();
+  showToast('Score bilan enregistré pour '+student+' ! 🏆');
+  launchConfetti();
+}
+
+// ============ CONFETTI ============
+function launchConfetti() {
+  const colors=['#f5a623','#f97316','#22c55e','#8b5cf6','#ec4899','#14b8a6','#ef4444'];
+  const container=document.createElement('div');
+  container.className='confetti-rain';
+  document.body.appendChild(container);
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    const size=8+Math.random()*10;
+    c.style.cssText=`position:absolute;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}%;top:-20px;border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation:fall ${1.5+Math.random()*2}s ${Math.random()*1}s ease-in forwards;`;
+    container.appendChild(c);
+  }
+  const style=document.createElement('style');
+  style.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}';
+  document.head.appendChild(style);
+  setTimeout(()=>{container.remove();style.remove();},4000);
+}
+
+// ============ SCORES ============
+function getMention(total) {
+  if(total>=27) return {label:'Excellent',cls:'badge-a'};
+  if(total>=21) return {label:'Bien',cls:'badge-a'};
+  if(total>=15) return {label:'Assez bien',cls:'badge-b'};
+  if(total>=9) return {label:'Insuffisant',cls:'badge-b'};
+  return {label:'À revoir',cls:'badge-c'};
+}
+
+function refreshScores() {
+  const tbody=document.getElementById('score-tbody');
+  const rows=Object.entries(scores).map(([name,s])=>{
+    const diag=s.diag??'-';
+    const form=s.formative??'-';
+    const somm=s.sommative??'-';
+    const jeux=s.jeux||0;
+    const total=(s.diag||0)+(s.formative||0)+(s.sommative||0);
+    return {name,diag,form,somm,jeux,total,rawTotal:total};
+  }).sort((a,b)=>b.rawTotal-a.rawTotal);
+
+  tbody.innerHTML=rows.map((r,i)=>{
+    const m=getMention(r.rawTotal);
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${r.name}</strong></td>
+      <td>${r.diag}<small style="color:rgba(255,255,255,0.4)">/5</small></td>
+      <td>${r.jeux>0?'✅×'+r.jeux:'—'}</td>
+      <td>${r.form}<small style="color:rgba(255,255,255,0.4)">/10</small></td>
+      <td>${r.somm}<small style="color:rgba(255,255,255,0.4)">/15</small></td>
+      <td><strong>${r.rawTotal}</strong><small style="color:rgba(255,255,255,0.4)">/30</small></td>
+      <td><span class="badge-score ${m.cls}">${m.label}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Bar chart
+  const bar=document.getElementById('bar-chart-area');
+  bar.innerHTML=rows.map(r=>{
+    const pct=((r.somm==='—'||r.somm==='-'?0:r.somm)/15)*100;
+    const col=pct>=80?'var(--green)':pct>=60?'var(--accent)':'var(--red)';
+    return `<div class="bar-row">
+      <div class="bar-name">${r.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col};">${r.somm==='—'||r.somm==='-'?'':r.somm+'/15'}</div></div>
+      <div class="bar-score-label" style="color:${col};">${r.somm==='—'||r.somm==='-'?'—':Math.round(pct)+'%'}</div>
+    </div>`;
+  }).join('');
+
+  // Podium
+  const top3=rows.filter(r=>r.rawTotal>0).slice(0,3);
+  const podiumArea=document.getElementById('podium-area');
+  if(top3.length===0){
+    podiumArea.innerHTML='<div class="info-box info-accent">Aucun score enregistré pour le moment.</div>';
+  } else {
+    const medals=['🥇','🥈','🥉'];
+    podiumArea.innerHTML=`<div class="card" style="text-align:center;">
+      ${top3.map((r,i)=>`<div style="margin:0.5rem 0;padding:0.75rem;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;align-items:center;gap:1rem;justify-content:center;">
+        <span style="font-size:1.8rem;">${medals[i]}</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;">${r.name}</span>
+        <span style="color:var(--accent);font-weight:700;">${r.rawTotal}/30</span>
+      </div>`).join('')}
+    </div>`;
+  }
+}
+
+function showScoreTab(id, btn) {
+  ['tableau','graphe','podium'].forEach(t=>document.getElementById('score-tab-'+t).style.display='none');
+  document.getElementById('score-tab-'+id).style.display='block';
+  document.querySelectorAll('.tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function exportCSV() {
+  const rows=Object.entries(scores).map(([name,s])=>{
+    const total=(s.diag||0)+(s.formative||0)+(s.sommative||0);
+    return [name,s.diag??'',s.formative??'',s.sommative??'',total].join(';');
+  });
+  const csv='Prénom;Diagnostique/5;Formative/10;Sommative/15;Total/30\n'+rows.join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,%EF%BB%BF'+encodeURIComponent(csv);
+  a.download='resultats_3types_animations.csv';
+  a.click();
+  showToast('📥 CSV exporté !');
+}
+
+function clearScores() {
+  if(confirm('Réinitialiser tous les scores ?')) {
+    participants.forEach(p=>scores[p]={diag:null,formative:null,sommative:null,jeux:0});
+    saveToStorage(); refreshScores(); showToast('🗑 Scores réinitialisés.');
+  }
+}
+
+// ============ INIT ============
+window.addEventListener('load',()=>{
+  loadFromStorage();
+  generateParticipantFields();
+  if(participants.length===0){
+    // Pré-remplir 15 noms vides
+    participants=Array.from({length:15},(_,i)=>'Élève '+(i+1));
+    participants.forEach(p=>{ if(!scores[p]) scores[p]={diag:null,formative:null,sommative:null,jeux:0}; });
+  }
+  generateParticipantFields();
+});
+</script>
+</body>
+</html>
