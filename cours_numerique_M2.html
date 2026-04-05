@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Choix de production | Éco-Gestion BAC PRO</title>
+<style>
+:root { --prune:#6B2D5E; --pl:#f3e8f0; --pm:#9b4d8a; --vert:#1D6A3A; --vl:#e8f5ec; --bleu:#1A4A7A; --bl:#e6f0fa; --gris:#F1EFE8; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0d1a2e;color:#ddeeff;min-height:100vh;}
+.header{background:linear-gradient(135deg,#0a1628,#1A4A7A);padding:1.5rem 2rem 1rem;border-bottom:2px solid #2a6aaa;}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:0.5rem;}
+.badge{background:rgba(255,255,255,0.12);border-radius:20px;padding:3px 12px;font-size:11px;letter-spacing:.07em;color:#99ccff;}
+.header h1{font-size:21px;font-weight:700;color:white;}
+.header .sub{font-size:13px;color:#7ab0dd;margin-top:2px;}
+.progress-bar{height:4px;background:rgba(255,255,255,0.08);}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2a6aaa,#99ccff);transition:width .4s ease;}
+.layout{display:flex;min-height:calc(100vh - 100px);}
+.sidebar{width:255px;flex-shrink:0;background:rgba(0,0,0,0.3);border-right:1px solid rgba(255,255,255,0.07);padding:1rem 0;position:sticky;top:0;height:calc(100vh - 100px);overflow-y:auto;}
+.sidebar-title{font-size:10px;letter-spacing:.1em;color:#5588aa;text-transform:uppercase;padding:0 1.25rem;margin-bottom:.5rem;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-size:13px;color:#7ab0dd;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:white;}
+.nav-item.active{background:rgba(42,106,170,0.25);border-left-color:#2a6aaa;color:white;}
+.nav-item.done{color:#66bb88;}
+.nav-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.nav-item.active .nav-num{background:#2a6aaa;}
+.nav-item.done .nav-num{background:var(--vert);}
+.main{flex:1;padding:2rem;max-width:820px;}
+.slide{display:none;animation:fadeIn .3s ease;}
+.slide.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide-header{background:linear-gradient(135deg,rgba(26,74,122,.6),rgba(26,74,122,.2));border:1px solid rgba(42,106,170,.4);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.slide-num{font-size:11px;color:#5599cc;letter-spacing:.07em;margin-bottom:.3rem;}
+.slide-title{font-size:20px;font-weight:700;color:white;}
+.slide-obj{font-size:13px;color:#99ccdd;margin-top:.3rem;}
+.voice-box{background:rgba(26,74,122,.25);border:1px solid rgba(42,106,170,.4);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:12px;}
+.voice-icon{width:36px;height:36px;background:#2a6aaa;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s;}
+.voice-icon:hover{background:#1A4A7A;transform:scale(1.05);}
+.voice-icon svg{width:16px;height:16px;fill:white;}
+.voice-text{font-size:14px;line-height:1.7;color:#c8ddf0;flex:1;}
+.voice-btn-row{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+.btn-v{background:rgba(42,106,170,.3);border:1px solid rgba(42,106,170,.5);color:#99ccee;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.btn-v:hover{background:rgba(42,106,170,.5);}
+.btn-v.speaking{background:#1A4A7A;}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:14px;font-weight:700;color:#99ccee;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:4px;height:16px;background:#2a6aaa;border-radius:2px;}
+.card p{font-size:14px;line-height:1.7;color:#aac8e0;margin-bottom:.5rem;}
+.key{background:rgba(26,74,122,.3);border:1px solid rgba(42,106,170,.5);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;}
+.key p{font-size:14px;color:#ddeeff;font-weight:500;line-height:1.6;}
+.formula{background:rgba(42,106,170,.2);border:2px solid rgba(42,106,170,.6);border-radius:8px;padding:1rem;text-align:center;margin:1rem 0;}
+.formula span{font-size:18px;font-weight:700;color:#99ddff;}
+.eco-table{width:100%;border-collapse:collapse;font-size:13px;margin:.75rem 0;border-radius:8px;overflow:hidden;}
+.eco-table th{background:rgba(26,74,122,.8);color:white;padding:8px 12px;text-align:left;font-weight:600;}
+.eco-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.06);color:#aac8e0;}
+.eco-table tr:nth-child(even) td{background:rgba(255,255,255,0.03);}
+.eco-table tr.hl td{background:rgba(42,106,170,.2);color:#ddeeff;font-weight:600;}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.split-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:1rem;}
+.split-card.bleu{border-color:rgba(42,106,170,.4);}
+.split-card.vert{border-color:rgba(29,106,58,.4);}
+.split-card h4{font-size:13px;font-weight:700;margin-bottom:.5rem;}
+.split-card.bleu h4{color:#99ccee;}
+.split-card.vert h4{color:#88c8a0;}
+.split-card p{font-size:13px;color:#8ab0c8;line-height:1.6;}
+.calc-box{background:rgba(0,0,0,.3);border:1px solid rgba(42,106,170,.3);border-radius:8px;padding:1rem;margin:.75rem 0;}
+.calc-box label{font-size:13px;color:#99ccee;display:block;margin-bottom:4px;}
+.calc-box input{background:rgba(255,255,255,.08);border:1px solid rgba(42,106,170,.4);color:white;border-radius:6px;padding:6px 10px;font-size:14px;font-family:inherit;width:160px;margin-right:10px;}
+.calc-box input:focus{outline:none;border-color:#2a6aaa;}
+.calc-box .result{font-size:15px;font-weight:700;color:#99ddff;margin-top:.5rem;}
+.quiz-card{background:rgba(29,106,58,.1);border:1px solid rgba(29,106,58,.3);border-radius:10px;padding:1.25rem;margin-bottom:1rem;}
+.quiz-q{font-size:15px;font-weight:600;color:white;margin-bottom:1rem;}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;}
+.qopt{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.65rem 1rem;cursor:pointer;font-size:14px;color:#aac8e0;transition:all .15s;text-align:left;font-family:inherit;}
+.qopt:hover{background:rgba(255,255,255,.1);color:white;}
+.qopt.correct{background:rgba(29,106,58,.4);border-color:var(--vert);color:#88c8a0;}
+.qopt.wrong{background:rgba(180,30,30,.3);border-color:#a32d2d;color:#f09595;}
+.qfb{margin-top:.75rem;font-size:13px;padding:.5rem .75rem;border-radius:6px;display:none;}
+.qfb.ok{background:rgba(29,106,58,.3);color:#88c8a0;}
+.qfb.ko{background:rgba(180,30,30,.2);color:#f09595;}
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0;margin-top:2rem;border-top:1px solid rgba(255,255,255,.07);}
+.nav-btn{display:flex;align-items:center;gap:8px;background:rgba(26,74,122,.4);border:1px solid rgba(42,106,170,.5);color:#99ccee;border-radius:8px;padding:.65rem 1.25rem;cursor:pointer;font-size:14px;transition:all .15s;font-family:inherit;}
+.nav-btn:hover{background:rgba(26,74,122,.7);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.nav-btn.primary{background:#1A4A7A;border-color:#2a6aaa;}
+.nav-btn.primary:hover{background:#2a6aaa;}
+.slide-counter{font-size:13px;color:#5599cc;}
+.lexique-item{display:flex;gap:12px;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.lex-term{font-size:13px;font-weight:700;color:#99ccee;min-width:180px;flex-shrink:0;}
+.lex-def{font-size:13px;color:#8ab0c8;line-height:1.6;}
+.status-bar{position:fixed;bottom:1rem;right:1rem;background:rgba(26,74,122,.9);border:1px solid rgba(42,106,170,.6);border-radius:8px;padding:.5rem 1rem;font-size:12px;color:#99ccee;display:none;}
+@media(max-width:680px){.sidebar{display:none}.split{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top"><span class="badge">BAC PRO AEPA / ASSP</span><span class="badge">Économie-Gestion</span></div>
+  <h1>Module 2 — Les choix d'une entreprise en matière de production</h1>
+  <div class="sub">EPV Formation · PEPITONE Chloé · 6 séquences</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:16.6%"></div></div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Séquences</div>
+    <div class="nav-item active" onclick="goTo(0)" id="nav0"><div class="nav-num">1</div><span>Types de décisions</span></div>
+    <div class="nav-item" onclick="goTo(1)" id="nav1"><div class="nav-num">2</div><span>Internalisation / Externalisation</span></div>
+    <div class="nav-item" onclick="goTo(2)" id="nav2"><div class="nav-num">3</div><span>La valeur ajoutée</span></div>
+    <div class="nav-item" onclick="goTo(3)" id="nav3"><div class="nav-num">4</div><span>Sources de financement</span></div>
+    <div class="nav-item" onclick="goTo(4)" id="nav4"><div class="nav-num">5</div><span>Budget et performance</span></div>
+    <div class="nav-item" onclick="goTo(5)" id="nav5"><div class="nav-num">6</div><span>Indicateurs et qualité</span></div>
+  </div>
+
+  <div class="main">
+
+    <!-- SLIDE 0 : Décisions -->
+    <div class="slide active" id="slide0">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 1 / 6</div>
+        <div class="slide-title">Les types de décisions dans une organisation</div>
+        <div class="slide-obj">Objectif : distinguer décisions stratégiques, tactiques et opérationnelles</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(0)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt0">Dans une structure médico-sociale, tout le monde ne prend pas les mêmes décisions. On distingue trois niveaux. Les décisions stratégiques, prises par la direction, engagent la structure sur le long terme — cinq ans ou plus. Par exemple, décider d'ouvrir une nouvelle antenne de service à domicile à Hyères, ou de rénover entièrement un bâtiment. Les décisions tactiques concernent le moyen terme, un à trois ans, et sont prises par les cadres intermédiaires — comme recruter trois nouvelles auxiliaires de vie. Et les décisions opérationnelles, ce sont celles du quotidien : organiser les plannings de la semaine, remplacer une collègue absente. Dans vos futures fonctions, vous serez principalement concernés par les décisions opérationnelles, mais il est essentiel de comprendre comment elles s'inscrivent dans la stratégie globale de votre structure.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(0)" id="btn0">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <div class="content-section">
+        <table class="eco-table">
+          <thead><tr><th>Type</th><th>Horizon</th><th>Qui décide ?</th><th>Exemple AEPA/ASSP</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td><strong>Stratégique</strong></td><td>Long terme (3-5 ans+)</td><td>Direction générale</td><td>Ouvrir une antenne à Hyères</td></tr>
+            <tr><td><strong>Tactique</strong></td><td>Moyen terme (1-3 ans)</td><td>Cadres intermédiaires</td><td>Recruter 3 auxiliaires de vie</td></tr>
+            <tr><td><strong>Opérationnelle</strong></td><td>Court terme (quotidien)</td><td>Équipe terrain</td><td>Organiser les plannings de la semaine</td></tr>
+          </tbody>
+        </table>
+        <div class="quiz-card">
+          <div class="quiz-q">La directrice d'un EHPAD décide de construire une nouvelle unité Alzheimer dans 4 ans. Quel type de décision est-ce ?</div>
+          <div class="quiz-opts">
+            <button class="qopt" onclick="quiz(this,'correct','0')">Stratégique</button>
+            <button class="qopt" onclick="quiz(this,'wrong','0')">Tactique</button>
+            <button class="qopt" onclick="quiz(this,'wrong','0')">Opérationnelle</button>
+          </div>
+          <div class="qfb" id="qf0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 1 : Internalisation/Externalisation -->
+    <div class="slide" id="slide1">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 2 / 6</div>
+        <div class="slide-title">Internalisation et externalisation</div>
+        <div class="slide-obj">Objectif : comparer produire soi-même et faire appel à un prestataire</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(1)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt1">Face à certaines activités, une organisation a le choix : les réaliser elle-même, c'est l'internalisation, ou les confier à un prestataire spécialisé, c'est l'externalisation. Prenons un exemple concret : un EHPAD doit nourrir ses résidents trois fois par jour. Il peut employer directement des cuisiniers — c'est l'internalisation. Ou il peut faire appel à une société de restauration collective qui livre les repas — c'est l'externalisation. Chaque option a ses avantages et ses inconvénients. L'internalisation permet un meilleur contrôle de la qualité et de la relation avec les résidents. L'externalisation peut réduire les coûts fixes et permettre de se concentrer sur le cœur de métier : le soin et l'accompagnement. Dans votre secteur, beaucoup de services de restauration, d'entretien ou de blanchisserie sont externalisés.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(1)" id="btn1">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <div class="split">
+        <div class="split-card bleu">
+          <h4>Internalisation</h4>
+          <p>L'organisation réalise l'activité avec ses propres salariés.<br><br>✓ Contrôle de la qualité<br>✓ Confidentialité<br>✓ Proximité avec les bénéficiaires<br>✗ Coûts fixes élevés<br>✗ Gestion RH supplémentaire</p>
+        </div>
+        <div class="split-card vert">
+          <h4>Externalisation</h4>
+          <p>L'organisation confie l'activité à un prestataire externe.<br><br>✓ Réduction des coûts fixes<br>✓ Expertise spécifique<br>✓ Flexibilité<br>✗ Moins de contrôle qualité<br>✗ Dépendance au prestataire</p>
+        </div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-q">Un SAAD décide de faire appel à un prestataire pour assurer le nettoyage de ses bureaux. C'est :</div>
+        <div class="quiz-opts">
+          <button class="qopt" onclick="quiz(this,'wrong','1')">De l'internalisation</button>
+          <button class="qopt" onclick="quiz(this,'correct','1')">De l'externalisation</button>
+          <button class="qopt" onclick="quiz(this,'wrong','1')">Une décision stratégique automatiquement</button>
+        </div>
+        <div class="qfb" id="qf1"></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 : VA -->
+    <div class="slide" id="slide2">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 3 / 6</div>
+        <div class="slide-title">La valeur ajoutée</div>
+        <div class="slide-obj">Objectif : calculer et comprendre la valeur ajoutée d'une structure</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(2)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt2">La valeur ajoutée est un concept clé en économie. Elle mesure la richesse réellement créée par une organisation. Comment la calculer ? C'est simple : on prend le chiffre d'affaires — c'est-à-dire tout ce que la structure a facturé ou perçu pour ses prestations — et on soustrait les consommations intermédiaires. Ce sont les achats de biens et services qui ont été utilisés pour produire : le carburant des véhicules, le matériel d'hygiène, les assurances, la téléphonie. La valeur ajoutée, c'est ce qui reste. C'est la richesse que l'organisation a elle-même créée, et qui va être partagée entre les salariés sous forme de salaires, l'État sous forme d'impôts, et l'organisation elle-même pour ses investissements futurs.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(2)" id="btn2">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <div class="formula"><span>Valeur Ajoutée = Chiffre d'Affaires − Consommations Intermédiaires</span></div>
+      <div class="card">
+        <div class="card-title">Calculateur interactif — Valeur Ajoutée</div>
+        <div class="calc-box">
+          <label>Chiffre d'affaires (€)</label>
+          <input type="number" id="ca" placeholder="ex: 380000" oninput="calcVA()">
+          <label style="margin-top:10px">Consommations intermédiaires (€)</label>
+          <input type="number" id="ci" placeholder="ex: 28000" oninput="calcVA()">
+          <div class="result" id="va-result"></div>
+        </div>
+      </div>
+      <div class="key"><p>La VA est ensuite répartie entre : salariés (salaires), État (impôts), banques (intérêts d'emprunt), et la structure elle-même (autofinancement).</p></div>
+      <div class="quiz-card">
+        <div class="quiz-q">ProxiDom réalise 420 000 € de CA et a 35 000 € de consommations intermédiaires. Quelle est sa valeur ajoutée ?</div>
+        <div class="quiz-opts">
+          <button class="qopt" onclick="quiz(this,'wrong','2')">35 000 €</button>
+          <button class="qopt" onclick="quiz(this,'correct','2')">385 000 €</button>
+          <button class="qopt" onclick="quiz(this,'wrong','2')">455 000 €</button>
+        </div>
+        <div class="qfb" id="qf2"></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 : Financement -->
+    <div class="slide" id="slide3">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 4 / 6</div>
+        <div class="slide-title">Les sources de financement</div>
+        <div class="slide-obj">Objectif : identifier les différentes sources de financement du secteur médico-social</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(3)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt3">Les structures médico-sociales ont une caractéristique financière particulière : elles ne vivent pas uniquement de ce que paient leurs usagers. Leur financement est mixte. Il y a d'abord la participation des usagers et de leurs familles — les résidents d'un EHPAD paient une partie du coût. Il y a les subventions des collectivités : le Conseil Départemental finance une partie des services d'aide à domicile. L'ARS, l'Agence Régionale de Santé, verse des dotations aux établissements de soins. La CAF finance les crèches et les services à l'enfance. Sans oublier les emprunts bancaires pour financer les investissements lourds comme la construction ou la rénovation. Et enfin, certaines structures reconstituent des réserves grâce à leurs excédents passés, c'est l'autofinancement.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(3)" id="btn3">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <table class="eco-table">
+        <thead><tr><th>Source de financement</th><th>Description</th><th>Exemple</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Autofinancement</strong></td><td>Réserves issues des excédents passés</td><td>Association qui réinvestit ses excédents</td></tr>
+          <tr><td><strong>Subventions publiques</strong></td><td>Aides des collectivités (État, CD, communes)</td><td>Subvention du CD à un SAAD associatif</td></tr>
+          <tr class="hl"><td><strong>Dotations ARS / CD</strong></td><td>Financements affectés par contrat</td><td>Dotation globale d'un IME ou d'un EHPAD</td></tr>
+          <tr><td><strong>Tarification usagers</strong></td><td>Participation des bénéficiaires/familles</td><td>Tarif journalier EHPAD</td></tr>
+          <tr><td><strong>Emprunt bancaire</strong></td><td>Crédit remboursé avec intérêts</td><td>Construction d'une nouvelle aile d'EHPAD</td></tr>
+          <tr><td><strong>CAF</strong></td><td>Financement de la petite enfance</td><td>PSU (Prestation de Service Unique) pour les crèches</td></tr>
+        </tbody>
+      </table>
+      <div class="quiz-card">
+        <div class="quiz-q">Le Conseil Départemental verse chaque mois une somme fixe à un SAAD pour financer son fonctionnement. C'est :</div>
+        <div class="quiz-opts">
+          <button class="qopt" onclick="quiz(this,'wrong','3')">De l'autofinancement</button>
+          <button class="qopt" onclick="quiz(this,'wrong','3')">Un emprunt bancaire</button>
+          <button class="qopt" onclick="quiz(this,'correct','3')">Une dotation / subvention publique</button>
+        </div>
+        <div class="qfb" id="qf3"></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 : Budget -->
+    <div class="slide" id="slide4">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 5 / 6</div>
+        <div class="slide-title">Le budget d'une structure médico-sociale</div>
+        <div class="slide-obj">Objectif : lire, analyser et interpréter un budget charges/produits</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(4)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt4">Un budget, c'est le document financier qui présente, pour l'année à venir, l'ensemble des dépenses prévues — les charges — et des recettes attendues — les produits. Dans une structure médico-sociale, le budget est une pièce centrale : il est soumis aux financeurs, contrôlé par les autorités de tutelle, et sert de boussole pour toutes les décisions. La particularité de ce secteur, c'est que les charges de personnel dominent largement. Elles représentent souvent 70 à 80% du budget total. C'est logique : on vend du temps humain, de l'accompagnement, du soin. Si les charges dépassent les produits, le budget est déficitaire — c'est une alerte sérieuse pour la structure. Si les produits dépassent les charges, on parle d'excédent — qu'une association ne peut pas distribuer mais peut réinvestir.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(4)" id="btn4">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <div class="split">
+        <div class="split-card bleu">
+          <h4>CHARGES (dépenses)</h4>
+          <p>• Personnel : salaires + cotisations patronales (70-80%)<br>• Fournitures et matières<br>• Services extérieurs<br>• Amortissements<br>• Charges financières</p>
+        </div>
+        <div class="split-card vert">
+          <h4>PRODUITS (recettes)</h4>
+          <p>• Tarification usagers<br>• Dotations ARS<br>• Subventions CD<br>• Prestations de services<br>• Dons et mécénat</p>
+        </div>
+      </div>
+      <div class="key"><p>Budget équilibré : Charges = Produits | Excédent : Produits > Charges | Déficit : Charges > Produits</p></div>
+      <div class="quiz-card">
+        <div class="quiz-q">Un SAAD a des charges de 360 000 € et des produits de 375 000 €. Sa situation est :</div>
+        <div class="quiz-opts">
+          <button class="qopt" onclick="quiz(this,'wrong','4')">Déficitaire</button>
+          <button class="qopt" onclick="quiz(this,'wrong','4')">En équilibre</button>
+          <button class="qopt" onclick="quiz(this,'correct','4')">Excédentaire (+15 000 €)</button>
+        </div>
+        <div class="qfb" id="qf4"></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 : Performance -->
+    <div class="slide" id="slide5">
+      <div class="slide-header">
+        <div class="slide-num">SÉQUENCE 6 / 6</div>
+        <div class="slide-title">Performance et indicateurs</div>
+        <div class="slide-obj">Objectif : calculer et interpréter des indicateurs de performance</div>
+      </div>
+      <div class="voice-box">
+        <div class="voice-icon" onclick="speak(5)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></div>
+        <div>
+          <div class="voice-text" id="vt5">La performance d'une organisation, c'est sa capacité à atteindre ses objectifs tout en gérant bien ses ressources. Dans votre secteur, la performance ne se mesure pas uniquement avec des chiffres financiers. Il y a trois dimensions. La performance économique : l'EHPAD remplit-il ses lits ? La structure équilibre-t-elle son budget ? La performance sociale interne : les salariés vont-ils bien ? Y a-t-il beaucoup d'absentéisme ? Beaucoup de turnover ? Et la performance sociétale : les bénéficiaires sont-ils satisfaits ? La structure a-t-elle un impact positif sur son territoire ? Pour mesurer tout ça, on utilise des indicateurs. Le taux d'occupation, le taux d'absentéisme, le taux de satisfaction, le coût horaire de la prestation. Ce sont des outils de pilotage indispensables pour prendre les bonnes décisions.</div>
+          <div class="voice-btn-row">
+            <button class="btn-v" onclick="speak(5)" id="btn5">▶ Écouter</button>
+            <button class="btn-v" onclick="stopSpeech()">⏹ Stop</button>
+            <button class="btn-v" onclick="adjustRate(-0.25)">🐢 Ralentir</button>
+            <button class="btn-v" onclick="adjustRate(0.25)">🐇 Accélérer</button>
+          </div>
+        </div>
+      </div>
+      <table class="eco-table">
+        <thead><tr><th>Indicateur</th><th>Formule</th><th>Interprétation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Taux d'occupation</strong></td><td>Places occupées / Places autorisées × 100</td><td>Objectif habituel > 95%</td></tr>
+          <tr><td><strong>Coût horaire</strong></td><td>Charges totales / Heures réalisées</td><td>Fixe le prix de revient de l'heure</td></tr>
+          <tr><td><strong>Taux d'absentéisme</strong></td><td>Jours d'absence / Jours théoriques × 100</td><td>> 8% = signal d'alerte</td></tr>
+          <tr><td><strong>Taux de satisfaction</strong></td><td>Réponses positives / Total réponses × 100</td><td>Objectif habituel > 85%</td></tr>
+          <tr><td><strong>Turn-over</strong></td><td>Nb départs / Effectif moyen × 100</td><td>Mesure l'instabilité des équipes</td></tr>
+        </tbody>
+      </table>
+      <div class="card">
+        <div class="card-title">Calculateur de taux d'occupation</div>
+        <div class="calc-box">
+          <label>Places occupées</label>
+          <input type="number" id="occ" placeholder="ex: 48" oninput="calcTaux()">
+          <label style="margin-top:10px">Places autorisées</label>
+          <input type="number" id="auto" placeholder="ex: 52" oninput="calcTaux()">
+          <div class="result" id="taux-result"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Lexique clé — Module 2</div>
+        <div class="lexique-item"><span class="lex-term">Valeur ajoutée</span><span class="lex-def">Richesse créée = CA − Consommations intermédiaires.</span></div>
+        <div class="lexique-item"><span class="lex-term">Internalisation</span><span class="lex-def">Activité réalisée en interne par les propres salariés de la structure.</span></div>
+        <div class="lexique-item"><span class="lex-term">Externalisation</span><span class="lex-def">Délégation d'une activité à un prestataire externe.</span></div>
+        <div class="lexique-item"><span class="lex-term">Budget</span><span class="lex-def">Document prévisionnel listant les charges (dépenses) et les produits (recettes).</span></div>
+        <div class="lexique-item"><span class="lex-term">Efficacité</span><span class="lex-def">Atteindre ses objectifs.</span></div>
+        <div class="lexique-item"><span class="lex-term">Efficience</span><span class="lex-def">Atteindre ses objectifs avec un minimum de ressources.</span></div>
+        <div class="lexique-item"><span class="lex-term">Dotation ARS</span><span class="lex-def">Financement accordé par l'Agence Régionale de Santé à un établissement de santé ou médico-social.</span></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-q">Un EHPAD a 52 lits, 47 occupés. Son taux d'occupation est de :</div>
+        <div class="quiz-opts">
+          <button class="qopt" onclick="quiz(this,'wrong','5')">47%</button>
+          <button class="qopt" onclick="quiz(this,'correct','5')">90,4%</button>
+          <button class="qopt" onclick="quiz(this,'wrong','5')">110,6%</button>
+        </div>
+        <div class="qfb" id="qf5"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="prevSlide()" id="btnPrev" disabled>← Précédent</button>
+      <span class="slide-counter" id="counter">Séquence 1 / 6</span>
+      <button class="nav-btn primary" onclick="nextSlide()" id="btnNext">Suivant →</button>
+    </div>
+  </div>
+</div>
+<div class="status-bar" id="statusBar"></div>
+
+<script>
+let current = 0; let rate = 0.95; const total = 6;
+const visited = new Set([0]);
+const voiceTexts = Array.from({length:6},(_,i)=>{ const el=document.getElementById('vt'+i); return el?el.textContent.trim():''; });
+const qAnswers = {
+  '0':'Décision sur 4+ ans engageant toute la structure = stratégique.',
+  '1':'Faire appel à un prestataire externe = externalisation.',
+  '2':'420 000 − 35 000 = 385 000 €.',
+  '3':'Un versement régulier d\'une collectivité = dotation/subvention.',
+  '4':'375 000 − 360 000 = +15 000 € → excédentaire.',
+  '5':'47/52 × 100 = 90,4%.',
+};
+function goTo(n){
+  document.getElementById('slide'+current).classList.remove('active');
+  document.getElementById('nav'+current).classList.remove('active');
+  if(visited.has(current)) document.getElementById('nav'+current).classList.add('done');
+  current=n; visited.add(n);
+  document.getElementById('slide'+n).classList.add('active');
+  document.getElementById('nav'+n).classList.add('active');
+  document.getElementById('nav'+n).classList.remove('done');
+  document.getElementById('progress').style.width=((n+1)/total*100)+'%';
+  document.getElementById('counter').textContent=`Séquence ${n+1} / ${total}`;
+  document.getElementById('btnPrev').disabled=n===0;
+  document.getElementById('btnNext').disabled=n===total-1;
+  document.getElementById('btnNext').textContent=n===total-1?'✓ Terminé':'Suivant →';
+  window.scrollTo(0,0); stopSpeech();
+}
+function nextSlide(){if(current<total-1)goTo(current+1);}
+function prevSlide(){if(current>0)goTo(current-1);}
+function speak(idx){
+  stopSpeech();
+  if(!window.speechSynthesis){showStatus('Synthèse vocale non disponible.');return;}
+  const utt=new SpeechSynthesisUtterance(voiceTexts[idx]);
+  utt.lang='fr-FR'; utt.rate=rate; utt.pitch=1;
+  const voices=speechSynthesis.getVoices();
+  const fr=voices.find(v=>v.lang.startsWith('fr'));
+  if(fr)utt.voice=fr;
+  const btn=document.getElementById('btn'+idx);
+  if(btn){btn.textContent='⏸ En lecture...';btn.classList.add('speaking');}
+  utt.onend=()=>{if(btn){btn.textContent='▶ Écouter';btn.classList.remove('speaking');}};
+  utt.onerror=()=>{if(btn){btn.textContent='▶ Écouter';btn.classList.remove('speaking');}};
+  window.speechSynthesis.speak(utt);
+}
+function stopSpeech(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  for(let i=0;i<total;i++){const b=document.getElementById('btn'+i);if(b){b.textContent='▶ Écouter';b.classList.remove('speaking');}}
+}
+function adjustRate(d){rate=Math.min(2,Math.max(0.5,rate+d));showStatus(`Vitesse : ${Math.round(rate*100)}%`);}
+function showStatus(msg){const b=document.getElementById('statusBar');b.textContent=msg;b.style.display='block';setTimeout(()=>{b.style.display='none';},2500);}
+function quiz(btn,result,id){
+  const parent=btn.closest('.quiz-opts');
+  parent.querySelectorAll('.qopt').forEach(b=>{b.disabled=true;b.onclick=null;});
+  btn.classList.add(result);
+  const fb=document.getElementById('qf'+id);
+  if(fb){fb.style.display='block';fb.className='qfb '+(result==='correct'?'ok':'ko');
+    fb.textContent=result==='correct'?('✓ '+qAnswers[id]):('✗ '+qAnswers[id]);}
+}
+function calcVA(){
+  const ca=parseFloat(document.getElementById('ca').value)||0;
+  const ci=parseFloat(document.getElementById('ci').value)||0;
+  const va=ca-ci;
+  const el=document.getElementById('va-result');
+  if(ca&&ci)el.textContent=`Valeur Ajoutée = ${ca.toLocaleString('fr-FR')} − ${ci.toLocaleString('fr-FR')} = ${va.toLocaleString('fr-FR')} €`;
+  else el.textContent='';
+}
+function calcTaux(){
+  const occ=parseFloat(document.getElementById('occ').value)||0;
+  const aut=parseFloat(document.getElementById('auto').value)||0;
+  const el=document.getElementById('taux-result');
+  if(occ&&aut){const t=(occ/aut*100).toFixed(1);el.textContent=`Taux d'occupation = ${t}% ${parseFloat(t)>=95?'✓ Objectif atteint':'⚠ Sous l\'objectif de 95%'}`;}
+  else el.textContent='';
+}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=()=>{};speechSynthesis.getVoices();}
+</script>
+</body>
+</html>

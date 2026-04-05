@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de positionnement — Économie-Gestion | EPV Formation</title>
+<style>
+  :root {
+    --prune: #6B2D5E;
+    --prune-light: #f3e8f0;
+    --prune-mid: #9b4d8a;
+    --vert: #27500A;
+    --vert-light: #eaf3de;
+    --rouge: #791F1F;
+    --rouge-light: #FCEBEB;
+    --gris: #444441;
+    --gris-light: #F1EFE8;
+    --border: 0.5px solid #D3D1C7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f3f0;
+    color: #2C2C2A;
+    padding: 1rem;
+    font-size: 15px;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+
+  .cover {
+    background: var(--prune);
+    color: white;
+    padding: 2.5rem 2rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .cover .etab { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.4rem; }
+  .cover h1 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 0.3rem; }
+  .cover .sous { font-size: 13px; opacity: 0.85; margin-bottom: 1.5rem; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .meta-box { background: rgba(255,255,255,0.13); border-radius: 8px; padding: 0.6rem 1rem; }
+  .meta-box .label { font-size: 10px; opacity: 0.7; margin-bottom: 2px; }
+  .meta-box .val { font-size: 13px; font-weight: 600; }
+  .meta-box input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    outline: none;
+    font-family: inherit;
+  }
+  .meta-box input::placeholder { color: rgba(255,255,255,0.4); }
+
+  .consigne {
+    background: white;
+    border-left: 3px solid var(--prune);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: #5F5E5A;
+    line-height: 1.6;
+    border: var(--border);
+    border-left: 3px solid var(--prune);
+  }
+
+  .partie { margin-bottom: 2rem; }
+  .partie-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--prune);
+    margin-bottom: 1rem;
+  }
+  .partie-badge {
+    background: var(--prune); color: white;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 12px; border-radius: 20px;
+  }
+  .partie-titre { font-size: 15px; font-weight: 600; color: var(--prune); }
+  .partie-pts { margin-left: auto; font-size: 11px; color: #888; }
+
+  .question {
+    background: white;
+    border: var(--border);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.9rem;
+  }
+  .q-header { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 0.75rem; }
+  .q-num {
+    background: var(--prune-light); color: var(--prune);
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+  .q-text { font-size: 14px; line-height: 1.5; flex: 1; }
+  .q-pts { margin-left: auto; font-size: 10px; color: #888; white-space: nowrap; flex-shrink: 0; }
+
+  .choix-list { display: flex; flex-direction: column; gap: 6px; }
+  .choix {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--gris-light);
+    border: var(--border);
+    border-radius: 6px;
+    padding: 0.55rem 0.9rem;
+    font-size: 13px; line-height: 1.4;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .choix:hover { background: var(--prune-light); border-color: var(--prune-mid); }
+  .choix.selected { background: var(--prune-light); border-color: var(--prune); }
+  .choix.correct { background: var(--vert-light); border-color: var(--vert); }
+  .choix.wrong { background: var(--rouge-light); border-color: var(--rouge); }
+  .radio {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid #B4B2A9;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .choix.selected .radio { border-color: var(--prune); background: var(--prune); }
+  .choix.selected .radio::after,
+  .choix.correct .radio::after,
+  .choix.wrong .radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: white; }
+  .choix.correct .radio { border-color: var(--vert); background: var(--vert); }
+  .choix.wrong .radio { border-color: var(--rouge); background: var(--rouge); }
+
+  .multi-note { font-size: 11px; color: #888; margin-bottom: 0.5rem; }
+
+  textarea {
+    width: 100%; border: var(--border);
+    border-radius: 6px;
+    padding: 0.65rem 0.9rem;
+    font-size: 13px; font-family: inherit;
+    color: var(--gris); background: var(--gris-light);
+    resize: vertical; min-height: 70px;
+    margin-top: 0.5rem; outline: none; line-height: 1.5;
+  }
+  textarea:focus { border-color: var(--prune); background: white; }
+
+  .assoc-grid {
+    display: grid;
+    grid-template-columns: 1fr 20px 1fr;
+    gap: 8px 6px;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 13px;
+  }
+  .assoc-left {
+    background: var(--prune-light);
+    border: var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600; color: var(--prune);
+  }
+  .assoc-arrow { text-align: center; color: #888; font-size: 14px; }
+  .assoc-select {
+    border: var(--border); border-radius: 6px;
+    padding: 0.5rem 0.5rem;
+    font-size: 12px; background: white; color: var(--gris);
+    width: 100%; font-family: inherit; cursor: pointer;
+  }
+  .assoc-select:focus { outline: none; border-color: var(--prune); }
+
+  .tableau { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 0.75rem; }
+  .tableau th {
+    background: var(--prune-light); color: var(--prune);
+    font-weight: 600; padding: 8px; border: var(--border); text-align: center;
+  }
+  .tableau td { padding: 8px; border: var(--border); text-align: center; }
+  .tableau td:first-child { text-align: left; }
+  .tableau input[type=text] {
+    width: 70px; text-align: center;
+    border: var(--border); border-radius: 4px;
+    padding: 3px 6px; font-size: 13px; font-family: inherit;
+    background: var(--gris-light); color: var(--gris);
+    min-height: unset;
+    margin-top: 0; resize: none;
+  }
+  .tableau input[type=text]:focus { outline: none; border-color: var(--prune); background: white; }
+
+  .hint { font-size: 10px; color: #888; margin-top: 4px; }
+
+  .feedback {
+    font-size: 12px; margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem; border-radius: 6px; display: none;
+    line-height: 1.4;
+  }
+  .feedback.ok { background: var(--vert-light); color: var(--vert); }
+  .feedback.ko { background: var(--rouge-light); color: var(--rouge); }
+
+  .btn-submit {
+    background: var(--prune); color: white;
+    border: none; border-radius: 8px;
+    padding: 0.85rem 2rem;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; width: 100%; margin-top: 2rem;
+    font-family: inherit; transition: opacity 0.15s;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+
+  .score-zone {
+    margin-top: 2rem; padding: 2rem;
+    background: white; border-radius: 12px;
+    border: var(--border); text-align: center;
+    display: none;
+  }
+  .score-num { font-size: 52px; font-weight: 700; color: var(--prune); }
+  .score-label { font-size: 14px; color: #888; margin-bottom: 1rem; }
+  .jauge { height: 10px; background: var(--gris-light); border-radius: 5px; max-width: 360px; margin: 1rem auto; overflow: hidden; }
+  .jauge-fill { height: 100%; background: var(--prune); border-radius: 5px; transition: width 0.8s ease; }
+  .niveau { font-size: 16px; font-weight: 600; color: var(--prune); margin-top: 0.5rem; }
+
+  @media print {
+    body { background: white; padding: 0; font-size: 12px; }
+    .btn-submit, .score-zone, .feedback { display: none !important; }
+    .question { page-break-inside: avoid; }
+    textarea { background: white; border: 1px solid #ccc; min-height: 50px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="cover">
+  <div class="etab">EPV Formation — BAC PRO AEPA / ASSP</div>
+  <h1>Test de positionnement<br>Économie-Gestion</h1>
+  <div class="sous">Environnement professionnel · Bases de gestion · Communication</div>
+  <div class="meta-grid">
+    <div class="meta-box"><div class="label">Durée</div><div class="val">45 minutes</div></div>
+    <div class="meta-box"><div class="label">Barème</div><div class="val">20 points</div></div>
+    <div class="meta-box"><div class="label">Nom</div><input type="text" id="nom" placeholder="Votre nom…"></div>
+    <div class="meta-box"><div class="label">Classe</div><input type="text" id="classe" placeholder="Votre classe…"></div>
+  </div>
+</div>
+
+<div class="consigne">
+  <strong>Consignes :</strong> Ce test sert uniquement à évaluer votre niveau de départ — aucune note ne sera retenue dans votre dossier. Répondez honnêtement, sans chercher les réponses. Lisez chaque question attentivement avant de répondre.
+</div>
+
+<!-- PARTIE 1 -->
+<div class="partie">
+  <div class="partie-header">
+    <span class="partie-badge">Partie 1</span>
+    <span class="partie-titre">Environnement et secteur professionnel</span>
+    <span class="partie-pts">8 pts</span>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q1</span>
+      <span class="q-text">Le secteur de l'aide à domicile et de l'accueil de la petite enfance appartient principalement à quel type d'économie ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="1" data-correct="b">
+      <div class="choix" data-val="a"><div class="radio"></div>L'économie marchande privée</div>
+      <div class="choix" data-val="b"><div class="radio"></div>L'économie sociale et solidaire (ESS)</div>
+      <div class="choix" data-val="c"><div class="radio"></div>L'économie industrielle</div>
+      <div class="choix" data-val="d"><div class="radio"></div>L'économie libérale de marché</div>
+    </div>
+    <div class="feedback" id="f1"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q2</span>
+      <span class="q-text">Parmi ces structures, laquelle peut employer un professionnel BAC PRO ASSP ou AEPA ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="2" data-correct="d">
+      <div class="choix" data-val="a"><div class="radio"></div>Une usine de fabrication automobile</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Un cabinet d'expertise comptable</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Une agence immobilière</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Un EHPAD (établissement pour personnes âgées dépendantes)</div>
+    </div>
+    <div class="feedback" id="f2"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q3</span>
+      <span class="q-text">Qu'est-ce qu'une association loi 1901 ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="3" data-correct="c">
+      <div class="choix" data-val="a"><div class="radio"></div>Une entreprise dont le but principal est de faire des bénéfices</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Un organisme public géré par l'État</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Un groupement de personnes à but non lucratif</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Une société anonyme (SA)</div>
+    </div>
+    <div class="feedback" id="f3"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q4</span>
+      <span class="q-text">Reliez chaque acteur à son rôle dans le secteur médico-social. <em style="font-size:12px;color:#888">(Sélectionnez dans les listes)</em></span>
+      <span class="q-pts">2 pts</span>
+    </div>
+    <div class="assoc-grid">
+      <div class="assoc-left">Le Conseil Départemental</div>
+      <div class="assoc-arrow">→</div>
+      <select class="assoc-select" data-assoc="1">
+        <option value="">Choisir…</option>
+        <option value="a">Finance l'Allocation Personnalisée d'Autonomie (APA)</option>
+        <option value="b">Verse des aides pour la garde d'enfants</option>
+        <option value="c">Forme les professionnels du secteur</option>
+        <option value="d">Inspecte les établissements de santé</option>
+      </select>
+      <div class="assoc-left">La CAF</div>
+      <div class="assoc-arrow">→</div>
+      <select class="assoc-select" data-assoc="2">
+        <option value="">Choisir…</option>
+        <option value="a">Finance l'Allocation Personnalisée d'Autonomie (APA)</option>
+        <option value="b">Verse des aides pour la garde d'enfants</option>
+        <option value="c">Forme les professionnels du secteur</option>
+        <option value="d">Inspecte les établissements de santé</option>
+      </select>
+    </div>
+    <div class="feedback" id="f4"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q5</span>
+      <span class="q-text">Citez deux évolutions de la société qui expliquent l'augmentation des besoins en services à la personne.</span>
+      <span class="q-pts">2 pts</span>
+    </div>
+    <textarea id="q5" placeholder="Répondez ici… (1 point par évolution pertinente)" rows="3"></textarea>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q6</span>
+      <span class="q-text">Un contrat de travail à temps partiel de 24h/semaine est signé pour une durée de 6 mois. De quel type de contrat s'agit-il ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="6" data-correct="b">
+      <div class="choix" data-val="a"><div class="radio"></div>CDI à temps partiel</div>
+      <div class="choix" data-val="b"><div class="radio"></div>CDD à temps partiel</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Contrat d'apprentissage</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Contrat de professionnalisation</div>
+    </div>
+    <div class="feedback" id="f6"></div>
+  </div>
+</div>
+
+<!-- PARTIE 2 -->
+<div class="partie">
+  <div class="partie-header">
+    <span class="partie-badge">Partie 2</span>
+    <span class="partie-titre">Bases de la gestion</span>
+    <span class="partie-pts">6 pts</span>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q7</span>
+      <span class="q-text">Un employeur verse 1 650 € de salaire net à un salarié. Les cotisations salariales représentent 22 % du brut. Quel est approximativement le salaire brut ?</span>
+      <span class="q-pts">1,5 pt</span>
+    </div>
+    <div class="choix-list" data-q="7" data-correct="c">
+      <div class="choix" data-val="a"><div class="radio"></div>1 350 €</div>
+      <div class="choix" data-val="b"><div class="radio"></div>1 980 €</div>
+      <div class="choix" data-val="c"><div class="radio"></div>2 115 €</div>
+      <div class="choix" data-val="d"><div class="radio"></div>2 550 €</div>
+    </div>
+    <div class="feedback" id="f7"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q8</span>
+      <span class="q-text">Une structure a des recettes de 45 000 € et des dépenses de 41 200 €. Que peut-on dire de sa situation financière ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="8" data-correct="a">
+      <div class="choix" data-val="a"><div class="radio"></div>Elle est excédentaire (résultat positif)</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Elle est déficitaire</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Elle est à l'équilibre</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Elle est en faillite</div>
+    </div>
+    <div class="feedback" id="f8"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q9</span>
+      <span class="q-text">Dans un budget prévisionnel, que représentent les "charges" ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="9" data-correct="b">
+      <div class="choix" data-val="a"><div class="radio"></div>Les ressources financières de la structure</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Les dépenses nécessaires au fonctionnement</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Les bénéfices réalisés</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Les subventions reçues</div>
+    </div>
+    <div class="feedback" id="f9"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q10</span>
+      <span class="q-text">Complétez le tableau en calculant le nombre d'heures restantes pour chaque prestation.</span>
+      <span class="q-pts">1,5 pt</span>
+    </div>
+    <table class="tableau">
+      <thead>
+        <tr>
+          <th style="text-align:left">Prestation</th>
+          <th>Heures prévues</th>
+          <th>Heures réalisées</th>
+          <th>Heures restantes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Aide à la toilette</td><td>12h</td><td>7h30</td><td><input type="text" id="tab1" placeholder="?h"></td></tr>
+        <tr><td>Préparation des repas</td><td>8h</td><td>8h</td><td><input type="text" id="tab2" placeholder="?h"></td></tr>
+        <tr><td>Accompagnement sorties</td><td>6h</td><td>2h</td><td><input type="text" id="tab3" placeholder="?h"></td></tr>
+      </tbody>
+    </table>
+    <div class="hint">0,5 pt par ligne. Calcul : heures prévues − heures réalisées.</div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q11</span>
+      <span class="q-text">Qu'est-ce que la TVA ? À quoi sert-elle ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <textarea id="q11" placeholder="Répondez en quelques lignes…" rows="3"></textarea>
+  </div>
+</div>
+
+<!-- PARTIE 3 -->
+<div class="partie">
+  <div class="partie-header">
+    <span class="partie-badge">Partie 3</span>
+    <span class="partie-titre">Communication professionnelle</span>
+    <span class="partie-pts">6 pts</span>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q12</span>
+      <span class="q-text">Dans un échange professionnel, que signifie "écoute active" ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="12" data-correct="c">
+      <div class="choix" data-val="a"><div class="radio"></div>Parler le plus possible pour montrer ses compétences</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Attendre son tour de parole sans vraiment écouter</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Porter attention à ce que dit l'autre, reformuler et questionner</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Prendre des notes sans regarder son interlocuteur</div>
+    </div>
+    <div class="feedback" id="f12"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q13</span>
+      <span class="q-text">Vous devez rédiger un compte-rendu de réunion d'équipe. Parmi ces éléments, lesquels sont indispensables ?</span>
+      <span class="q-pts">1,5 pt</span>
+    </div>
+    <p class="multi-note">Plusieurs réponses possibles — cochez tout ce qui vous semble juste.</p>
+    <div class="choix-list" data-q="13" data-correct="ace" data-multi="true">
+      <div class="choix" data-val="a"><div class="radio"></div>Date, heure et lieu de la réunion</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Les opinions personnelles du rédacteur</div>
+      <div class="choix" data-val="c"><div class="radio"></div>La liste des participants</div>
+      <div class="choix" data-val="d"><div class="radio"></div>La météo du jour</div>
+      <div class="choix" data-val="e"><div class="radio"></div>Les décisions prises et actions à mener</div>
+    </div>
+    <div class="feedback" id="f13"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q14</span>
+      <span class="q-text">Rédigez un message professionnel court pour informer votre équipe que la réunion prévue vendredi à 14h est reportée au lundi suivant à 10h.</span>
+      <span class="q-pts">2 pts</span>
+    </div>
+    <textarea id="q14" placeholder="Rédigez votre message ici…" rows="5"></textarea>
+    <div class="hint">Critères : formule d'appel · information claire · ton professionnel · formule de politesse</div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q15</span>
+      <span class="q-text">Qu'est-ce qu'un "conflit d'intérêts" dans le contexte professionnel ?</span>
+      <span class="q-pts">1 pt</span>
+    </div>
+    <div class="choix-list" data-q="15" data-correct="b">
+      <div class="choix" data-val="a"><div class="radio"></div>Un désaccord sur le planning des vacances entre collègues</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Une situation où l'intérêt personnel peut influencer une décision professionnelle</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Un litige entre deux entreprises concurrentes</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Un désaccord sur le prix d'une prestation</div>
+    </div>
+    <div class="feedback" id="f15"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-header">
+      <span class="q-num">Q16</span>
+      <span class="q-text">Parmi ces situations, laquelle correspond à un comportement professionnel adapté ?</span>
+      <span class="q-pts">0,5 pt</span>
+    </div>
+    <div class="choix-list" data-q="16" data-correct="c">
+      <div class="choix" data-val="a"><div class="radio"></div>Partager des informations confidentielles sur un bénéficiaire avec un ami</div>
+      <div class="choix" data-val="b"><div class="radio"></div>Arriver en retard sans prévenir son responsable</div>
+      <div class="choix" data-val="c"><div class="radio"></div>Signaler une difficulté rencontrée lors d'une intervention à son responsable</div>
+      <div class="choix" data-val="d"><div class="radio"></div>Utiliser le téléphone de la structure pour des appels personnels</div>
+    </div>
+    <div class="feedback" id="f16"></div>
+  </div>
+</div>
+
+<button class="btn-submit" onclick="submitTest()">Valider mes réponses</button>
+
+<div class="score-zone" id="score-zone">
+  <div class="score-num" id="score-display">—</div>
+  <div class="score-label">points sur 20</div>
+  <div class="jauge"><div class="jauge-fill" id="jauge-fill" style="width:0%"></div></div>
+  <div class="niveau" id="niveau"></div>
+</div>
+
+</div>
+
+<script>
+const sel = {};
+const multiSel = {};
+
+document.querySelectorAll('.choix-list:not([data-multi])').forEach(list => {
+  const q = list.dataset.q;
+  sel[q] = null;
+  list.querySelectorAll('.choix').forEach(c => {
+    c.addEventListener('click', () => {
+      list.querySelectorAll('.choix').forEach(x => x.classList.remove('selected'));
+      c.classList.add('selected');
+      sel[q] = c.dataset.val;
+    });
+  });
+});
+
+document.querySelectorAll('.choix-list[data-multi]').forEach(list => {
+  const q = list.dataset.q;
+  multiSel[q] = new Set();
+  list.querySelectorAll('.choix').forEach(c => {
+    c.addEventListener('click', () => {
+      if (multiSel[q].has(c.dataset.val)) { multiSel[q].delete(c.dataset.val); c.classList.remove('selected'); }
+      else { multiSel[q].add(c.dataset.val); c.classList.add('selected'); }
+    });
+  });
+});
+
+const QCM = [
+  {q:'1', correct:'b', pts:1, fb:'Le secteur services à la personne relève majoritairement de l\'ESS : associations, mutuelles, coopératives.'},
+  {q:'2', correct:'d', pts:1, fb:'L\'EHPAD est un établissement médico-social typique des débouchés BAC PRO ASSP/AEPA.'},
+  {q:'3', correct:'c', pts:1, fb:'La loi 1901 définit l\'association comme un contrat entre personnes à but non lucratif.'},
+  {q:'6', correct:'b', pts:1, fb:'Durée déterminée = CDD. La quotité de 24h/semaine définit le temps partiel.'},
+  {q:'7', correct:'c', pts:1.5, fb:'Brut = Net ÷ (1 − 0,22) = 1 650 ÷ 0,78 ≈ 2 115 €.'},
+  {q:'8', correct:'a', pts:1, fb:'45 000 − 41 200 = 3 800 € d\'excédent → situation financière saine.'},
+  {q:'9', correct:'b', pts:1, fb:'Charges = dépenses (salaires, loyer, fournitures…). Opposé aux produits/recettes.'},
+  {q:'12', correct:'c', pts:1, fb:'L\'écoute active implique : attention, reformulation, questionnement ouvert.'},
+  {q:'15', correct:'b', pts:1, fb:'Conflit d\'intérêts = intérêt personnel vs devoir professionnel.'},
+  {q:'16', correct:'c', pts:0.5, fb:'Signaler une difficulté = transparence et responsabilité professionnelle.'},
+];
+
+function submitTest() {
+  let pts = 0;
+
+  QCM.forEach(item => {
+    const list = document.querySelector('[data-q="' + item.q + '"]');
+    const fb = document.getElementById('f' + item.q);
+    if (!list || !fb) return;
+    const chosen = sel[item.q];
+    const ok = chosen === item.correct;
+    list.querySelectorAll('.choix').forEach(c => {
+      if (c.dataset.val === item.correct) c.classList.add('correct');
+      else if (c.dataset.val === chosen && !ok) c.classList.add('wrong');
+    });
+    if (ok) pts += item.pts;
+    fb.style.display = 'block';
+    fb.className = 'feedback ' + (ok ? 'ok' : 'ko');
+    fb.textContent = (ok ? '✓ ' : '✗ ') + item.fb;
+  });
+
+  // Q13 multi
+  const list13 = document.querySelector('[data-q="13"]');
+  const fb13 = document.getElementById('f13');
+  if (list13 && fb13) {
+    const chosen = multiSel['13'] || new Set();
+    const expected = new Set(['a','c','e']);
+    const ok = chosen.size === expected.size && [...expected].every(v => chosen.has(v));
+    list13.querySelectorAll('.choix').forEach(c => {
+      if (expected.has(c.dataset.val)) c.classList.add('correct');
+      else if (chosen.has(c.dataset.val)) c.classList.add('wrong');
+    });
+    if (ok) pts += 1.5;
+    fb13.style.display = 'block';
+    fb13.className = 'feedback ' + (ok ? 'ok' : 'ko');
+    fb13.textContent = (ok ? '✓ ' : '✗ ') + 'Éléments indispensables : date/lieu (A), participants (C), décisions (E).';
+  }
+
+  // Q4 association
+  const a1 = document.querySelector('[data-assoc="1"]').value;
+  const a2 = document.querySelector('[data-assoc="2"]').value;
+  const fb4 = document.getElementById('f4');
+  let pts4 = 0;
+  if (a1 === 'a') pts4 += 1;
+  if (a2 === 'b') pts4 += 1;
+  pts += pts4;
+  if (fb4) {
+    fb4.style.display = 'block';
+    fb4.className = 'feedback ' + (pts4 === 2 ? 'ok' : 'ko');
+    fb4.textContent = (pts4 === 2 ? '✓ ' : '✗ ') + 'Conseil Départemental → finance l\'APA · CAF → verse des aides pour la garde d\'enfants.';
+  }
+
+  pts = Math.min(Math.round(pts * 10) / 10, 20);
+  const pct = Math.round((pts / 20) * 100);
+
+  const zone = document.getElementById('score-zone');
+  zone.style.display = 'block';
+  document.getElementById('score-display').textContent = pts;
+  document.getElementById('jauge-fill').style.width = pct + '%';
+
+  const niveaux = [
+    [0, 7, 'Niveau débutant — les cours couvriront tout le programme'],
+    [8, 11, 'Niveau intermédiaire — des bases à construire ensemble'],
+    [12, 15, 'Bon niveau — quelques notions à consolider'],
+    [16, 20, 'Très bon niveau de départ — notions bien maîtrisées'],
+  ];
+  const n = niveaux.find(([min, max]) => pts >= min && pts <= max);
+  document.getElementById('niveau').textContent = n ? n[2] : '';
+
+  document.querySelector('.btn-submit').style.display = 'none';
+  zone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+</body>
+</html>
